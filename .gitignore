@@ -1,8 +1,11 @@
+# Mac
 **/.DS_Store
 
 __pycache__/
 __pypackages__/
 
+# Audio files
+audio
 
 # Environment
 .venv
