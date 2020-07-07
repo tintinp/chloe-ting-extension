@@ -4,8 +4,8 @@ import librosa
 import librosa.display
 import numpy as np
 import matplotlib.pyplot as plt
-# import tensorflow as tf
 from matplotlib.pyplot import specgram
+# import tensorflow as tf
 
 
 def load_sound_files(file_paths):
@@ -54,8 +54,11 @@ def plot_log_power_specgram(sound_names, raw_sounds):
     plt.show()
 
 
-sound_file_paths = ['/Users/tintin/Desktop/exercise_intro_1.wav',
-                    '/Users/tintin/Desktop/1000hz.wav']
+dir_path = os.path.dirname(os.path.realpath(__file__))
+samples_path = os.path.abspath(os.path.join(dir_path, '..', '..', 'samples'))
+
+sound_file_paths = [os.path.join(samples_path, 'exercise_intro_1.wav'),
+                    os.path.join(samples_path, '1000hz.wav')]
 
 sound_names = ['Exercise Intro 1', '1000 Hz']
 
