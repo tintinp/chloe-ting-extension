@@ -1,12 +1,26 @@
 # Mac
-**/.DS_Store
+.DS_Store
+.AppleDouble
+.LSOverride
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
 
+# Python
 __pycache__/
 __pypackages__/
+
+# JupyterNotebooks
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
 
 # Audio files
 audio
 
-# Environment
+# Virtual Environment
 .venv
 venv/

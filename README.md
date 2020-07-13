@@ -2,9 +2,15 @@
 
 WIP
 
-# Reference
+# References
+
+## Sound classification Tutorial
 
 https://www.kdnuggets.com/2016/09/urban-sound-classification-neural-networks-tensorflow.html
+
+## TensorFlow Tutorial
+
+https://adventuresinmachinelearning.com/python-tensorflow-tutorial/
 
 # Overview
 
@@ -42,7 +48,18 @@ https://www.kdnuggets.com/2016/09/urban-sound-classification-neural-networks-ten
 
 (batch size and samples batch info)
 
-## Model
+### Model
+
+Input
+X = [[audio_features_1], [audio_features_2], ..., [audio_features_n]]
+
+Output
+y = [[0, 0, 1], [1, 0, 0], ..., [0, 1, 0]]
+
+X = np.array([[0,0], [0,1], [1,0], [1,1]])
+y = np.array([ [0], [1], [1], [0]])
+
+## Result
 
 ### Accuracy
 

@@ -1,75 +1,56 @@
 import glob
-import os
 import librosa
 import librosa.display
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import specgram
-# import tensorflow as tf
+from os import path
+import argparse
+
+parser = argparse.ArgumentParser(description='Plot audio features')
+parser.add_argument('-f', '--file', required=True, action='store',
+                    help='path to audio file')
+args = parser.parse_args()
 
 
-def load_sound_files(file_paths):
-    raw_sounds = []
-    for fp in file_paths:
-        X, sr = librosa.load(fp)
-        raw_sounds.append(X)
-    return raw_sounds
-
-
-def plot_waves(sound_names, raw_sounds):
-    i = 1
-    fig = plt.figure()
-    for n, f in zip(sound_names, raw_sounds):
-        plt.subplot(len(raw_sounds), 1, i)
-        librosa.display.waveplot(np.array(f), sr=22050)
-        plt.title(n.title(), fontsize=12)
-        i += 1
+def plot_wave(name, raw_sound):
+    plt.figure(1)
+    librosa.display.waveplot(np.array(raw_sound), sr=22050)
+    plt.title(name.title(), fontsize=12)
     plt.suptitle('Figure 1: Waveplot', fontsize=16)
-    plt.show()
 
 
-def plot_specgram(sound_names, raw_sounds):
-    i = 1
-    fig = plt.figure()
-    for n, f in zip(sound_names, raw_sounds):
-        plt.subplot(len(raw_sounds), 1, i)
-        specgram(np.array(f), Fs=22050)
-        plt.title(n.title(), fontsize=12)
-        i += 1
+def plot_specgram(name, raw_sound):
+    plt.figure(2)
+    specgram(np.array(raw_sound), Fs=22050)
+    plt.title(name.title(), fontsize=12)
     plt.suptitle('Figure 2: Spectrogram', fontsize=16)
-    plt.show()
 
 
-def plot_log_power_specgram(sound_names, raw_sounds):
-    i = 1
-    fig = plt.figure()
-    for n, f in zip(sound_names, raw_sounds):
-        plt.subplot(len(raw_sounds), 1, i)
-        D = librosa.amplitude_to_db(
-            np.abs(librosa.stft(f))**2, ref=np.max)
-        librosa.display.specshow(D, x_axis='time', y_axis='log')
-        plt.title(n.title(), fontsize=12)
-        plt.colorbar(format='%+2.0f dB')
-        i += 1
+def plot_log_power_specgram(name, raw_sound):
+    plt.figure(3)
+    D = librosa.amplitude_to_db(
+        np.abs(librosa.stft(raw_sound))**2, ref=np.max)
+    librosa.display.specshow(D, x_axis='time', y_axis='log')
+    plt.title(name.title(), fontsize=12)
+    plt.colorbar(format='%+2.0f dB')
     plt.suptitle('Figure 3: Log power spectrogram', fontsize=16)
-    plt.show()
-
-
-dir_path = os.path.dirname(os.path.realpath(__file__))
-samples_path = os.path.abspath(os.path.join(dir_path, '..', '..', 'samples'))
-
-sound_file_paths = [os.path.join(samples_path, 'exercise_intro_1.wav'),
-                    os.path.join(samples_path, '1000hz.wav')]
-
-sound_names = ['Exercise Intro 1', '1000 Hz']
 
 
 def main():
-    print('hello')
-    raw_sounds = load_sound_files(sound_file_paths)
-    plot_waves(sound_names, raw_sounds)
-    plot_specgram(sound_names, raw_sounds)
-    plot_log_power_specgram(sound_names, raw_sounds)
+    file_path = path.join(path.abspath(args.file))
+    file_name = path.basename(file_path)
+
+    # Load audio
+    raw_sound, sr = librosa.load(file_path)
+    print('Ploting', file_name)
+    print('Sampling rate:', sr)
+
+    # Plot
+    plot_wave(file_name, raw_sound)
+    plot_specgram(file_name, raw_sound)
+    plot_log_power_specgram(file_name, raw_sound)
+    plt.show()
 
 
 if __name__ == '__main__':
