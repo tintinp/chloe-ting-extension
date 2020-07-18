@@ -49,7 +49,6 @@ const checkElementDisable = async () => {
     canChange,
     canCollectData
   } = await getStateFromBackground()
-  console.log(canChange, canCollectData)
   if (canChange) {
     $('#tab_selector').prop('disabled', false)
     $('#sample_length').prop('disabled', false)

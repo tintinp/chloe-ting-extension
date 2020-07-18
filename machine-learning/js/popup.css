@@ -58,9 +58,7 @@ body {
 }
 
 .btn-small.class-selector:hover {
-  background-color: #FFFFFF;
   border: 2px solid #db5252;
-  color: #707070;
 }
 
 .btn-small.selected {

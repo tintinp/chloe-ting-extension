@@ -11,7 +11,6 @@ class StateManager {
   getState() {
     const canChange = !this.state.collectingData
     const canCollectData = this.isNumber(this.state.sampleLength) && this.state.selectedTabId !== null
-    console.log(this.state.sampleLength, this.state.selectedTabId)
     return { ...this.state, canChange, canCollectData }
   }
 
