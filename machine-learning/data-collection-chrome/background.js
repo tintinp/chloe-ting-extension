@@ -1,6 +1,5 @@
 import StateManager from './StateManager.js'
 import actions from './actions.js'
-import constants from './constants.js'
 
 const main = async () => {
   const stateManager = new StateManager()
