@@ -1,0 +1,17 @@
+{
+  "name": "Chloe Ting ML Extension",
+  "version": "1.0",
+  "description": "Prototype 1",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "Chloe Ting ML"
+  },
+  "background": {
+    "page": "background.html"
+  },
+  "permissions": [
+    "tabs"
+  ],
+  "web_accessible_resources": ["actions.js"]
+}

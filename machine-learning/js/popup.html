@@ -1,0 +1,100 @@
+<html>
+  <head>
+    <title>Chloe Ting Data Collection Extension</title>
+    <link type="text/css" rel="stylesheet" href="materialize/materialize.min.css">
+    <script src="materialize/materialize.min.js"></script>
+    <script type="module" src="popup.js"></script>
+    <link rel="stylesheet" href="popup.css" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body>
+    <div class="main">
+      <div class="header">Chloe Ting Data Collection Mode</div>
+      <div class="flex-row padding-small max-height">
+        <div class="flex-column half padding-mid section" id="controller">
+          <div class="items-in-row">
+            <p class="tool-label">Class Marking</p>
+            <div class="items-in-col">
+              <div class="row">
+                <div class="col s4"><a class="btn-small max-width unselected">Chloe</a></div>
+                <div class="col s4"><a class="btn-small max-width unselected">Beep</a></div>
+                <div class="col s4"><a class="btn-small max-width unselected">Music</a></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="tool-label">Audio Input</p>
+            <div class="row horizontal-center">
+              <div class="col s8">
+                <label>Selected Tab</label>
+                <select class="browser-default" id="tab_selector">
+                  <option value="" disabled selected>Choose your option</option>
+                </select>
+              </div>
+              <div class="col s1"></div>
+              <div class="col s3"><i class="tiny material-icons icon-red">brightness_1</i></div>
+            </div>
+          </div>
+          <div>
+            <p class="tool-label">Control</p>
+            <div class="row">
+              <div class="col s12 input-field">
+                <label for="fft_window">FFT Window (ms)</label>
+                <input value="50" id="fft_window" type="text" class="validate">
+              </div>
+              <div class="col s12 switch">
+                <label>
+                  Off
+                  <input type="checkbox">
+                  <span class="lever"></span>
+                  On
+                </label>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <div>
+            <a class="disabled waves-effect waves-light btn-small btn-block">Export</a>
+          </div>
+        </div>
+        <div class="flex-column half padding-mid section" id="logger">
+          <div class="row max-width">
+            <div class="col s12">
+              <p class="tool-label">Stats</p>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>Total samples collected</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Chloe Ting's Voice</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Beep</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Music</td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="row max-width">
+              <div class="col s12">
+                <p class="tool-label">Logs</p>
+                <form>
+                  <textarea></textarea>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
