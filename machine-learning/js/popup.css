@@ -52,10 +52,20 @@ body {
   height: 500px;
 }
 
-.btn-small.unselected {
+.btn-small.class-selector {
   background-color: #FFFFFF;
-  border-color: #BCBCBC;
   color: #707070;
+}
+
+.btn-small.class-selector:hover {
+  background-color: #FFFFFF;
+  border: 2px solid #db5252;
+  color: #707070;
+}
+
+.btn-small.selected {
+  background-color: #db5252;
+  color: #FFFFFF;
 }
 
 .tool-label {

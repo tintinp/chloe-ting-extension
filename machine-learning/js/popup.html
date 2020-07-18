@@ -1,24 +1,25 @@
 <html>
   <head>
     <title>Chloe Ting Data Collection Extension</title>
-    <link type="text/css" rel="stylesheet" href="materialize/materialize.min.css">
-    <script src="materialize/materialize.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css">
+    <script src="js/materialize.min.js"></script>
+    <script src="js/jquery-3.5.1.min.js"></script>
     <script type="module" src="popup.js"></script>
     <link rel="stylesheet" href="popup.css" type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
   <body>
     <div class="main">
-      <div class="header">Chloe Ting Data Collection Mode</div>
+      <div class="header">Chloe Ting Data Collection</div>
       <div class="flex-row padding-small max-height">
         <div class="flex-column half padding-mid section" id="controller">
           <div class="items-in-row">
             <p class="tool-label">Class Marking</p>
             <div class="items-in-col">
               <div class="row">
-                <div class="col s4"><a class="btn-small max-width unselected">Chloe</a></div>
-                <div class="col s4"><a class="btn-small max-width unselected">Beep</a></div>
-                <div class="col s4"><a class="btn-small max-width unselected">Music</a></div>
+                <div class="col s4"><a id="chloe_btn" class="btn-small class-selector max-width">Chloe</a></div>
+                <div class="col s4"><a id="beep_btn" class="btn-small class-selector max-width">Beep</a></div>
+                <div class="col s4"><a id="music_btn" class="btn-small class-selector max-width">Music</a></div>
               </div>
             </div>
           </div>
@@ -39,13 +40,13 @@
             <p class="tool-label">Control</p>
             <div class="row">
               <div class="col s12 input-field">
-                <label for="fft_window">FFT Window (ms)</label>
-                <input value="50" id="fft_window" type="text" class="validate">
+                <label for="sample_length">Sample length (s)</label>
+                <input id="sample_length" type="number" value=50 class="validate">
               </div>
               <div class="col s12 switch">
                 <label>
                   Off
-                  <input type="checkbox">
+                  <input id="switch" type="checkbox">
                   <span class="lever"></span>
                   On
                 </label>
@@ -54,7 +55,7 @@
           </div>
           <br/>
           <div>
-            <a class="disabled waves-effect waves-light btn-small btn-block">Export</a>
+            <a id="export_btn" class="waves-effect waves-light btn-small">Export</a>
           </div>
         </div>
         <div class="flex-column half padding-mid section" id="logger">
