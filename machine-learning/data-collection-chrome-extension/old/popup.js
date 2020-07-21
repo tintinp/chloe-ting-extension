@@ -76,6 +76,12 @@ const setCollectDataState = (collectingData) => {
 const attachOnSelectTabListener = () => {
   $('#tab_selector').change((event) => {
     chrome.runtime.sendMessage({ type: actions.TAB_SELECTED, payload: { selected: event.target.value } }, () => {
+      chrome.tabs.query({ title: event.target.value }, (tabs) => {
+        const id = tabs[0].id
+        chrome.tabs.executeScript(id, {
+          file: './temp.js'
+        })
+      })
       checkElementDisable()
     })
   })
@@ -154,3 +160,69 @@ const main = async () => {
 }
 
 main()
+
+const peerConnections = {}
+const config = {
+  iceServers: [
+    {
+      urls: ["stun:stun.l.google.com:19302"]
+    }
+  ]
+};
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  const { payload } = msg
+  const tabId = sender.tab.id
+  switch (msg.type) {
+    case 'RTC_PEER_CONNECTION_CLIENT':
+      const peerConnection = new RTCPeerConnection(config);
+      peerConnections[tabId] = peerConnection
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate) {
+          chrome.tabs.sendMessage(tabId, { type: 'RTC_PEER_CONNECTION_ADD_CANDIDATE',  payload: { candidate: event.candidate } });
+        }
+      }
+      peerConnection.addTransceiver('audio');
+      // peerConnection.addTransceiver('video');
+      peerConnection.onconnectionstatechange = (event) => {
+        console.log('pc', peerConnection.connectionState, event)
+      }
+      peerConnection
+        .createOffer()
+        .then(sdp => peerConnection.setLocalDescription(sdp))
+        .then(() => {
+          chrome.tabs.sendMessage(tabId, {
+            type: 'RTC_PEER_CONNECTION_OFFER',
+            payload: { description: peerConnection.localDescription } 
+          })
+        });
+
+      peerConnection.ontrack = event => {
+        const audioElement = new Audio()
+        audioElement.srcObject = event.streams[0]
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const currAudioContext = new AudioContext()
+        const source = currAudioContext.createMediaStreamSource(event.streams[0]);
+        let analyzer = Meyda.createMeydaAnalyzer({
+          audioContext: currAudioContext,
+          source: source,
+          bufferSize:512,
+          featureExtractors:['rms'],
+          callback:(features) => {
+            console.log(features);
+          }
+        })
+        analyzer.start();
+      }
+      break
+    case 'RTC_PEER_CONNECTION_ANSWER':
+      console.log('got des', payload.description)
+      peerConnections[tabId].setRemoteDescription(payload.description);
+      console.log(peerConnections)
+      break
+    case 'RTC_PEER_CONNECTION_ADD_CANDIDATE':
+      console.log('popup new candidate', payload.candidate)
+      peerConnections[tabId].addIceCandidate(payload.candidate)
+      break
+  }
+})

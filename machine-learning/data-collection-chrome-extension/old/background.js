@@ -1,8 +1,10 @@
+import AudioContextManager from './AudioContextManager.js'
 import StateManager from './StateManager.js'
 import actions from './actions.js'
 
 const main = async () => {
   const stateManager = new StateManager()
+  const audioContextManager = new AudioContextManager()
 
   chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     switch(msg.type) {
@@ -36,6 +38,12 @@ const main = async () => {
       case actions.SWITCH_CHANGED:
         stateManager.setCollectingData(msg.payload.value)
         sendResponse({ response: 'Done'})
+        break
+      case actions.START_COLLECTING_DATA:
+        // audioContextManager.getAnalyzer
+        break
+      case 'RTC_PEER_CONNECTION_ANSWER':
+        console.log('got des', msg.payload.description)
         break
       default:
         sendResponse({ response: 'Invalid message type' })

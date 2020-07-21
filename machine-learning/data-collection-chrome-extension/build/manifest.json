@@ -5,13 +5,16 @@
   "manifest_version": 2,
   "browser_action": {
     "default_popup": "popup.html",
-    "default_title": "Chloe Ting ML"
+    "default_title": "Chloe Ting Data Collection"
   },
   "background": {
     "page": "background.html"
   },
   "permissions": [
-    "tabs"
+    "tabs",
+    "notifications",
+    "http://*/",
+    "https://*/"
   ],
-  "web_accessible_resources": ["actions.js"]
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

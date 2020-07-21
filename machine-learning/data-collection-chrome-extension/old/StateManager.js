@@ -1,9 +1,11 @@
+import constants from "./constants.js"
+
 class StateManager {
   constructor() {
     this.state = {
       selectedTabId: null,
       selectedClass: null,
-      sampleLength: 50,
+      sampleLength: constants.DEFAULT_SAMPLE_LENGTH,
       collectingData: false,
     }
   }

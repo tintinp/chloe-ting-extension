@@ -24,3 +24,7 @@ audio
 # Virtual Environment
 .venv
 venv/
+
+# JS
+node_modules
+
