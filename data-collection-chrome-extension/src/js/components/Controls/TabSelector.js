@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const TabSelector = ({ selectedTab, tabs, activeSignal, handleSelectedTab }) => {
+const TabSelector = ({ selectedTab, tabs, activeSignal, handleSelectedTab, collectingData }) => {
   const style = useStyles()
 
   const generateMenuItem = () => {
@@ -55,6 +55,7 @@ const TabSelector = ({ selectedTab, tabs, activeSignal, handleSelectedTab }) => 
             labelId="tab-select-label"
             id="tab-select"
             value={selectedTab ? selectedTab : 'not selected'}
+            disabled={collectingData}
             onChange={handleChange}
             label="tab-select"
           >
@@ -74,7 +75,8 @@ TabSelector.propTypes = {
   selectedTab: PropTypes.number,
   tabs: PropTypes.object.isRequired,
   activeSignal: PropTypes.bool.isRequired,
-  handleSelectedTab: PropTypes.func.isRequired
+  handleSelectedTab: PropTypes.func.isRequired,
+  collectingData: PropTypes.bool.isRequired
 }
 
 export default TabSelector

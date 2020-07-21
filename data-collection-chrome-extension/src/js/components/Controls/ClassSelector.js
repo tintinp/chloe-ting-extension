@@ -1,10 +1,9 @@
 import '../../../style/dashboard.css'
 
-import React, { useEffect, useState } from 'react'
-
 import Button from '@material-ui/core/Button'
 import CONSTANTS from '../../constants/CONSTANTS'
 import PropTypes from 'prop-types'
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles({
@@ -37,19 +36,12 @@ const useStyles = makeStyles({
 
 const Controls = ({ selectedClass, handleSelectedClass }) => {
   const btn = useStyles()
-  const [selectedBtn, setSelectedBtn] = useState(selectedClass)
-
-  useEffect(() => {
-    setSelectedBtn(selectedClass)
-  }, [selectedClass])
 
   const handleClickBtn = (event) => {
     const id = event.currentTarget.id
-    if (selectedBtn === id) {
-      setSelectedBtn(null)
+    if (selectedClass === id) {
       handleSelectedClass(null)
     } else {
-      setSelectedBtn(id)
       handleSelectedClass(id)
     }
   }
@@ -60,21 +52,21 @@ const Controls = ({ selectedClass, handleSelectedClass }) => {
       <div className="row align-center">
         <Button
           id={CONSTANTS.CHLOE}
-          className={selectedBtn === CONSTANTS.CHLOE ? btn.selected : btn.notSelected}
+          className={selectedClass === CONSTANTS.CHLOE ? btn.selected : btn.notSelected}
           onClick={handleClickBtn}
         >
           Chloe
         </Button>
         <Button
           id={CONSTANTS.BEEP}
-          className={selectedBtn === CONSTANTS.BEEP ? btn.selected : btn.notSelected}
+          className={selectedClass === CONSTANTS.BEEP ? btn.selected : btn.notSelected}
           onClick={handleClickBtn}
         >
           Beep
         </Button>
         <Button
           id={CONSTANTS.MUSIC}
-          className={selectedBtn === CONSTANTS.MUSIC ? btn.selected : btn.notSelected}
+          className={selectedClass === CONSTANTS.MUSIC ? btn.selected : btn.notSelected}
           onClick={handleClickBtn}
         >
           Music

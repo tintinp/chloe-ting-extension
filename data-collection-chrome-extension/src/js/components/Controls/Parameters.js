@@ -15,11 +15,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Parameters = ({ sampleLength, handleChangeSampleLength }) => {
+const Parameters = ({ collectingData, handleChangeSampleLength }) => {
   const style = useStyles()
 
   const handleChange = (event) => {
-    console.log(event.target.value)
+    handleChangeSampleLength(parseFloat(event.target.value))
   }
 
   return (
@@ -28,6 +28,7 @@ const Parameters = ({ sampleLength, handleChangeSampleLength }) => {
       <div className="row align-left center-level">
         <form className={style.root} autoComplete="off">
           <TextField
+            disabled={collectingData}
             id="sample=length"
             label="Sample Length (ms)"
             type="number"
@@ -43,7 +44,7 @@ const Parameters = ({ sampleLength, handleChangeSampleLength }) => {
 }
 
 Parameters.propTypes = {
-  sampleLength: PropTypes.any,
+  collectingData: PropTypes.bool.isRequired,
   handleChangeSampleLength: PropTypes.func.isRequired
 }
 

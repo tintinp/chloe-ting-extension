@@ -53,9 +53,6 @@ export const setSampleLength = (sampleLength) => {
 
 export const toggleStartStop = () => {
   return {
-    type: TOGGLE_START_STOP,
-    payload: {
-      collectingData: sampleLength
-    }
+    type: TOGGLE_START_STOP
   }
 }

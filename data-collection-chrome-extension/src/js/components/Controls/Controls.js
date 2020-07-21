@@ -44,16 +44,22 @@ const Controls = ({
             tabs={dashboardStates.tabs}
             activeSignal={dashboardStates.activeSignal}
             handleSelectedTab={handleSelectedTab}
+            collectingData={dashboardStates.collectingData}
           />
         </Grid>
         <Grid item xs={12}>
           <Parameters
-            sampleLength={dashboardStates.sampleLength}
             handleChangeSampleLength={handleChangeSampleLength}
+            collectingData={dashboardStates.collectingData}
           />
         </Grid>
         <Grid item xs={12}>
-          <Tasks collectingData={dashboardStates.collectingData} handleToggle={handleToggle} />
+          <Tasks
+            collectingData={dashboardStates.collectingData}
+            handleToggle={handleToggle}
+            sampleLength={dashboardStates.sampleLength}
+            selectedTab={dashboardStates.selectedTab}
+          />
         </Grid>
       </Grid>
     </div>
