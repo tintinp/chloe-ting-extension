@@ -1,5 +1,6 @@
 import '../../../style/dashboard.css'
 
+import React, { useEffect } from 'react'
 import { keys, map } from 'lodash'
 
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord'
@@ -7,7 +8,6 @@ import FormControl from '@material-ui/core/FormControl'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import PropTypes from 'prop-types'
-import React from 'react'
 import Select from '@material-ui/core/Select'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -27,8 +27,18 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const TabSelector = ({ selectedTab, tabs, activeSignal, handleSelectedTab, collectingData }) => {
+const TabSelector = ({
+  selectedTabId,
+  tabs,
+  activeSignal,
+  handleSelectedTabId,
+  collectingData
+}) => {
   const style = useStyles()
+
+  useEffect(() => {
+    console.log('selected tab id', selectedTabId)
+  }, [selectedTabId])
 
   const generateMenuItem = () => {
     return map(keys(tabs), (id) => {
@@ -42,7 +52,7 @@ const TabSelector = ({ selectedTab, tabs, activeSignal, handleSelectedTab, colle
   }
 
   const handleChange = (event) => {
-    handleSelectedTab(event.target.value)
+    handleSelectedTabId(event.target.value)
   }
 
   return (
@@ -54,7 +64,7 @@ const TabSelector = ({ selectedTab, tabs, activeSignal, handleSelectedTab, colle
           <Select
             labelId="tab-select-label"
             id="tab-select"
-            value={selectedTab ? selectedTab : 'not selected'}
+            value={selectedTabId ? selectedTabId : 'not selected'}
             disabled={collectingData}
             onChange={handleChange}
             label="tab-select"
@@ -72,10 +82,10 @@ const TabSelector = ({ selectedTab, tabs, activeSignal, handleSelectedTab, colle
 }
 
 TabSelector.propTypes = {
-  selectedTab: PropTypes.number,
+  selectedTabId: PropTypes.number,
   tabs: PropTypes.object.isRequired,
   activeSignal: PropTypes.bool.isRequired,
-  handleSelectedTab: PropTypes.func.isRequired,
+  handleSelectedTabId: PropTypes.func.isRequired,
   collectingData: PropTypes.bool.isRequired
 }
 

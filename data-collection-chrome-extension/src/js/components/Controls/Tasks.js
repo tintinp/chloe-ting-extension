@@ -38,17 +38,17 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-const Tasks = ({ collectingData, handleToggle, sampleLength, selectedTab }) => {
+const Tasks = ({ collectingData, handleToggle, sampleLength, selectedTabId }) => {
   const style = useStyles()
   const [canStart, setCanStart] = useState(false)
 
   useEffect(() => {
-    if (isNumber(sampleLength) && isNumber(selectedTab)) {
+    if (isNumber(sampleLength) && isNumber(selectedTabId)) {
       setCanStart(true)
     } else {
       setCanStart(false)
     }
-  }, [sampleLength, selectedTab])
+  }, [sampleLength, selectedTabId])
 
   const onToggle = () => {
     handleToggle()
@@ -92,7 +92,7 @@ Tasks.propTypes = {
   collectingData: PropTypes.bool.isRequired,
   handleToggle: PropTypes.func.isRequired,
   sampleLength: PropTypes.any,
-  selectedTab: PropTypes.any
+  selectedTabId: PropTypes.any
 }
 
 export default Tasks

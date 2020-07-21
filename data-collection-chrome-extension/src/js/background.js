@@ -1,4 +1,5 @@
-import { addTabs } from './redux/actions'
+import { addTabs, removeTabById } from './redux/actions'
+
 import store from './redux/store'
 import { wrapStore } from 'webext-redux'
 
@@ -7,6 +8,20 @@ const getAllTabs = () => {
     store.dispatch(addTabs(tabs))
   })
 }
+
+chrome.tabs.onCreated.addListener((tab) => {
+  store.dispatch(addTabs([tab]))
+})
+
+chrome.tabs.onUpdated.addListener((id) => {
+  chrome.tabs.get(id, (tab) => {
+    store.dispatch(addTabs([tab]))
+  })
+})
+
+chrome.tabs.onRemoved.addListener((id) => {
+  store.dispatch(removeTabById(id))
+})
 
 const init = () => {
   wrapStore(store)

@@ -1,7 +1,7 @@
 import {
   setSampleLength,
   setSelectedClass,
-  setSelectedTab,
+  setSelectedTabId,
   toggleStartStop
 } from '../../redux/actions'
 
@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
 const Controls = ({
   dashboardStates,
   handleSelectedClass,
-  handleSelectedTab,
+  handleSelectedTabId,
   handleToggle,
   handleChangeSampleLength
 }) => {
@@ -40,10 +40,10 @@ const Controls = ({
         </Grid>
         <Grid item xs={12}>
           <TabSelector
-            selectedTab={dashboardStates.selectedTab}
+            selectedTabId={dashboardStates.selectedTabId}
             tabs={dashboardStates.tabs}
             activeSignal={dashboardStates.activeSignal}
-            handleSelectedTab={handleSelectedTab}
+            handleSelectedTabId={handleSelectedTabId}
             collectingData={dashboardStates.collectingData}
           />
         </Grid>
@@ -58,7 +58,7 @@ const Controls = ({
             collectingData={dashboardStates.collectingData}
             handleToggle={handleToggle}
             sampleLength={dashboardStates.sampleLength}
-            selectedTab={dashboardStates.selectedTab}
+            selectedTabId={dashboardStates.selectedTabId}
           />
         </Grid>
       </Grid>
@@ -76,7 +76,7 @@ const mapStateToProps = ({ dashboardStates }) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   handleSelectedClass: (selectedClass) => dispatch(setSelectedClass(selectedClass)),
-  handleSelectedTab: (selectedTab) => dispatch(setSelectedTab(selectedTab)),
+  handleSelectedTabId: (selectedTabId) => dispatch(setSelectedTabId(selectedTabId)),
   handleToggle: () => dispatch(toggleStartStop()),
   handleChangeSampleLength: (sampleLength) => dispatch(setSampleLength(sampleLength))
 })

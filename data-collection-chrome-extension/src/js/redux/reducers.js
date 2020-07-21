@@ -3,11 +3,11 @@ import {
   ADD_TABS,
   CHANGE_DASHBOARD_STATE,
   CHANGE_DATA_STAT,
-  REMOVE_TABS,
+  REMOVE_TAB_BY_ID,
   SET_SAMPLE_LENGTH,
   TOGGLE_START_STOP
 } from './actions'
-import { cloneDeep, isNumber, keys, map } from 'lodash'
+import { cloneDeep, isNumber } from 'lodash'
 
 import CONSTANTS from '../constants/CONSTANTS'
 import { combineReducers } from 'redux'
@@ -39,6 +39,7 @@ const logs = (state = {}, action) => {
 }
 
 const dashboardStates = (state = defaultDashboardState, action) => {
+  let tabs
   switch (action.type) {
     case CHANGE_DASHBOARD_STATE:
       return {
@@ -46,7 +47,7 @@ const dashboardStates = (state = defaultDashboardState, action) => {
         ...action.payload
       }
     case ADD_TABS:
-      let tabs = cloneDeep(state.tabs)
+      tabs = cloneDeep(state.tabs)
       action.payload.tabs.forEach((tab) => {
         tabs[tab.id] = tab.title
       })
@@ -54,12 +55,16 @@ const dashboardStates = (state = defaultDashboardState, action) => {
         ...state,
         tabs
       }
-    // case REMOVE_TABS:
-    //   const currentTabs = {}
-    //   return {
-    //     ...state,
-    //     ...currentTabs
-    //   }
+    case REMOVE_TAB_BY_ID:
+      tabs = cloneDeep(state.tabs)
+      const selectedTabId =
+        action.payload.tabId === state.selectedTabId ? null : state.selectedTabId
+      delete tabs[action.payload.tabId]
+      return {
+        ...state,
+        selectedTabId: selectedTabId,
+        tabs
+      }
     case TOGGLE_START_STOP:
       return {
         ...state,
