@@ -1,0 +1,92 @@
+import '../../../style/dashboard.css'
+
+import React, { useEffect, useState } from 'react'
+
+import Button from '@material-ui/core/Button'
+import CONSTANTS from '../../constants/CONSTANTS'
+import PropTypes from 'prop-types'
+import { makeStyles } from '@material-ui/core/styles'
+
+const useStyles = makeStyles({
+  notSelected: {
+    background: '#FFFFFF',
+    color: '#707070',
+    height: 40,
+    width: 90,
+    margin: 10,
+    border: '1px solid #edebeb',
+    'box-shadow': '1px 1px 1px 1px #dbdbdb',
+    '&:hover': {
+      border: '4px solid #db5252',
+      background: '#FFFFFF'
+    }
+  },
+  selected: {
+    background: '#db5252',
+    color: '#FFFFFF',
+    margin: 10,
+    'box-shadow': '1px 1px 1px 1px #dbdbdb',
+    '&:hover': {
+      border: '4px solid #db5252',
+      background: '#db5252'
+    },
+    height: 40,
+    width: 90
+  }
+})
+
+const Controls = ({ selectedClass, handleSelectedClass }) => {
+  const btn = useStyles()
+  const [selectedBtn, setSelectedBtn] = useState(selectedClass)
+
+  useEffect(() => {
+    setSelectedBtn(selectedClass)
+  }, [selectedClass])
+
+  const handleClickBtn = (event) => {
+    const id = event.currentTarget.id
+    if (selectedBtn === id) {
+      setSelectedBtn(null)
+      handleSelectedClass(null)
+    } else {
+      setSelectedBtn(id)
+      handleSelectedClass(id)
+    }
+  }
+
+  return (
+    <div>
+      <p className="tool-label">Class Marking</p>
+      <div className="row align-center">
+        <Button
+          id={CONSTANTS.CHLOE}
+          className={selectedBtn === CONSTANTS.CHLOE ? btn.selected : btn.notSelected}
+          onClick={handleClickBtn}
+        >
+          Chloe
+        </Button>
+        <Button
+          id={CONSTANTS.BEEP}
+          className={selectedBtn === CONSTANTS.BEEP ? btn.selected : btn.notSelected}
+          onClick={handleClickBtn}
+        >
+          Beep
+        </Button>
+        <Button
+          id={CONSTANTS.MUSIC}
+          className={selectedBtn === CONSTANTS.MUSIC ? btn.selected : btn.notSelected}
+          onClick={handleClickBtn}
+        >
+          Music
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+Controls.propTypes = {
+  selectedClass: PropTypes.string,
+  handleSelectedClass: PropTypes.func.isRequired
+}
+
+export default Controls

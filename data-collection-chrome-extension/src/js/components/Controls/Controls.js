@@ -1,33 +1,61 @@
-import React, { useEffect, useState } from 'react'
+import {
+  setSampleLength,
+  setSelectedClass,
+  setSelectedTab,
+  toggleStartStop
+} from '../../redux/actions'
 
+import ClassSelector from './ClassSelector'
+import Grid from '@material-ui/core/Grid'
+import Parameters from './Parameters'
 import PropTypes from 'prop-types'
+import React from 'react'
+import TabSelector from './TabSelector'
+import Tasks from './Tasks'
 import { connect } from 'react-redux'
+import { makeStyles } from '@material-ui/core/styles'
 
-const Controls = ({ dashboardStates }) => {
+const useStyles = makeStyles(() => ({
+  root: {
+    padding: 10
+  }
+}))
+
+const Controls = ({
+  dashboardStates,
+  handleSelectedClass,
+  handleSelectedTab,
+  handleToggle,
+  handleChangeSampleLength
+}) => {
+  const style = useStyles()
   return (
     <div>
-      <div className="items-in-row">
-        <p className="tool-label">Class Marking</p>
-        <div className="items-in-col">
-          <div className="row">
-            <div className="col s4">
-              <a id="chloe_btn" className="btn-small class-selector max-width">
-                Chloe
-              </a>
-            </div>
-            <div className="col s4">
-              <a id="beep_btn" className="btn-small class-selector max-width">
-                Beep
-              </a>
-            </div>
-            <div className="col s4">
-              <a id="music_btn" className="btn-small class-selector max-width">
-                Music
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Grid className={style.grid} container spacing={2}>
+        <Grid item xs={12}>
+          <ClassSelector
+            selectedClass={dashboardStates.selectedClass}
+            handleSelectedClass={handleSelectedClass}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TabSelector
+            selectedTab={dashboardStates.selectedTab}
+            tabs={dashboardStates.tabs}
+            activeSignal={dashboardStates.activeSignal}
+            handleSelectedTab={handleSelectedTab}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Parameters
+            sampleLength={dashboardStates.sampleLength}
+            handleChangeSampleLength={handleChangeSampleLength}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Tasks collectingData={dashboardStates.collectingData} handleToggle={handleToggle} />
+        </Grid>
+      </Grid>
     </div>
   )
 }
@@ -40,4 +68,10 @@ const mapStateToProps = ({ dashboardStates }) => ({
   dashboardStates: dashboardStates
 })
 
-export default connect(mapStateToProps)(Controls)
+const mapDispatchToProps = (dispatch) => ({
+  handleSelectedClass: (selectedClass) => dispatch(setSelectedClass(selectedClass)),
+  handleSelectedTab: (selectedTab) => dispatch(setSelectedTab(selectedTab)),
+  handleToggle: () => dispatch(toggleStartStop()),
+  handleChangeSampleLength: (sampleLength) => dispatch(setSampleLength(sampleLength))
+})
+export default connect(mapStateToProps, mapDispatchToProps)(Controls)

@@ -1,16 +1,3 @@
-body {
-  font-family: sans-serif;
-  color: #707070;
-  width: 780px;
-  margin: 10px;
-  background-color: #f7f7f7;
-}
-
-.header {
-  font-size: 2.25em;
-  align-items: center;
-}
-
 .tool-label {
   color: #707070;
   font-family: sans-serif;
@@ -40,4 +27,3 @@ body {
 .center-level {
   align-items: center;
 }
-
