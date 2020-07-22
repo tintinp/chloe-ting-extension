@@ -35,13 +35,13 @@ Custom-made Chrome extension to capture audio from Youtube and process its audio
 Using Librosa python library, we can extract and plot audio characteristic. The purpose of this is not to classify any gender. The plot below is an observation from samples provided by [OpenSLR](http://www.openslr.org/12/).
 
 ![OpenSLR vocal spectrogram](/assets/readme/images/OpenSLR_sample.png)
-Format: ![Spectrogram from one of OpenSLR sample, higher frequency intensity in the 200Hz range.]
+Format: ![Spectrogram from one of OpenSLR sample, higher frequency intensity in the 200Hz range.](/assets/readme/images/OpenSLR_sample.png)
 ![openslr audio sample](/assets/readme/audio-samples/84-121123-0001.flac)
 
 The following diagram shows power log spectrogram of each classification: Chloe, Beep, and Music.
 
 ![Chloe Ting's Sample](/assets/readme/images/logspectrogram_chloe_1.png)
-Format: ![Chloe Ting's sample from Youtube, similar frequency intensity to OpenSLR sample in the 200Hz range.]
+Format: ![Chloe Ting's sample from Youtube, similar frequency intensity to OpenSLR sample in the 200Hz range.](/assets/readme/images/logspectrogram_chloe_1.png)
 ![chloe ting's audio sample](/assets/readme/audio-samples/052020-0-11.wav)
 
 It can be seen that Chloe's vocal shared similar frequency intensity as the speech sample from OpenSLR
