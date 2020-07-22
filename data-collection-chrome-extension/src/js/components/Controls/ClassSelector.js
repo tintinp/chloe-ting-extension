@@ -16,18 +16,18 @@ const useStyles = makeStyles({
     border: '1px solid #edebeb',
     'box-shadow': '1px 1px 1px 1px #dbdbdb',
     '&:hover': {
-      border: '4px solid #db5252',
+      border: '4px solid #ff3d46',
       background: '#FFFFFF'
     }
   },
   selected: {
-    background: '#db5252',
+    background: '#ff3d46',
     color: '#FFFFFF',
     margin: 10,
     'box-shadow': '1px 1px 1px 1px #dbdbdb',
     '&:hover': {
-      border: '4px solid #db5252',
-      background: '#db5252'
+      border: '4px solid #ff3d46',
+      background: '#ff3d46'
     },
     height: 40,
     width: 90

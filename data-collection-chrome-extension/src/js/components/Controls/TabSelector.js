@@ -36,10 +36,6 @@ const TabSelector = ({
 }) => {
   const style = useStyles()
 
-  useEffect(() => {
-    console.log('selected tab id', selectedTabId)
-  }, [selectedTabId])
-
   const generateMenuItem = () => {
     return map(keys(tabs), (id) => {
       const idInt = parseInt(id)

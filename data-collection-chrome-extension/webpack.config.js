@@ -48,6 +48,9 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [{ from: './src/manifest.json' }]
     }),
+    new CopyWebpackPlugin({
+      patterns: [{ from: './src/js/IIFE/getAudioViaWebRTC.js' }]
+    }),
     new HtmlWebpackPlugin({
       template: join(__dirname, 'src', 'popup.html'),
       filename: 'popup.html',

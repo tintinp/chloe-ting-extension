@@ -11,6 +11,7 @@ import { cloneDeep, isNumber } from 'lodash'
 
 import CONSTANTS from '../constants/CONSTANTS'
 import { combineReducers } from 'redux'
+import eventManager from '../Managers/EventManager'
 
 const defaultDashboardState = {
   selectedTabId: null,
@@ -49,7 +50,9 @@ const dashboardStates = (state = defaultDashboardState, action) => {
     case ADD_TABS:
       tabs = cloneDeep(state.tabs)
       action.payload.tabs.forEach((tab) => {
-        tabs[tab.id] = tab.title
+        if (tab) {
+          tabs[tab.id] = tab.title
+        }
       })
       return {
         ...state,
@@ -66,6 +69,15 @@ const dashboardStates = (state = defaultDashboardState, action) => {
         tabs
       }
     case TOGGLE_START_STOP:
+      if (state.collectingData) {
+        eventManager.sendMessage(CONSTANTS.EVENTS.STOP_COLLECTING_DATA)
+      } else {
+        eventManager.sendMessage(CONSTANTS.EVENTS.START_COLLECTING_DATA, {
+          selectedTabId: state.selectedTabId,
+          selectedClass: state.selectedClass,
+          sampleLength: state.sampleLength
+        })
+      }
       return {
         ...state,
         collectingData: !state.collectingData
