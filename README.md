@@ -1,6 +1,71 @@
-# chloe-ting-extension
+# Chloe Ting Music Replacer [WIP]
 
-WIP
+Replace music inside Chloe Ting's workout video with music on another Chrome tab. Work in progress.
+
+# Project Overview
+
+## Audio feature extraction
+
+[ ] Explore audio characteristics
+[ ] Determine DSP technique
+[ ] Choose features to extract for traning
+
+## Data collection
+
+[ ] Build Chrome extension for data collection
+[ ] Extract features into csv file
+
+## Machine Learning
+
+[ ] Experiment with parameters for each neural network layer
+[ ] Improve training dataset or feature selections (go back to data collection step)
+[ ] Create accurate model
+
+## Apply ML model
+
+[ ] Build Chrome extension to handle multiple audio sources
+[ ] Apply trained model to the extension
+
+# Data collection with Chrome extension
+
+Custom-made Chrome extension to capture audio from Youtube and process its audio signal using Meyda JavaScript package. We can choose tab from the dropdown menu to select tab with Chloe Ting's video. The default sample length is 700ms. Meaning, audio features are calculated from that 700ms time frame, which counted as one dataset. Each dataset can be labeled by selecting one of the three button on top marked as `CHLOE`, `BEEP`, `MUSIC`, where Chole is Chloe's voice when explaining, Beep is the countdown timer, and Music is background music during the workout. We can export data collected into a CSV file. More detail on usage, implementation, and further development can be found on `README.md` of `data-collection-chrome-extension`.
+
+# Feature Extraction
+
+Using Librosa python library, we can extract and plot audio characteristic. The following diagram shows power log spectrogram of each classification: Chloe, Beep, and Music.
+
+The goal is to extract audio features from Youtube and predict using trained model inside Chrome extension, hence using JavaScript library, Meyda. Therefore, to minimize unknown factors for the purpose of this prototype, feature extraction for training the model should also be extracted in the same manner. You can learn more about Meyda [here].
+
+From multiple research papers and projects, I've decided to go with these audio features:
+
+1.
+2.
+3.
+4.
+
+## Extracting
+
+## Extracting MCFF
+
+## Extracting
+
+# Machine Learning
+
+Using TensorFlow to implement a neural network model with three layers. Total number of features is ... and total number of class is 3. The model training session is implemented with Python. Model can later be export and use to predict with TensorFlow JS.
+
+## Neural network layers
+
+## Cost function
+
+[TBD]
+
+## Accuracy
+
+[TBD]
+
+# Chrome extension with trained ML model
+
+[TBD]
 
 # References
 
