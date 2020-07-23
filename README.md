@@ -33,7 +33,9 @@ Replace music inside Chloe Ting's workout video with music on another Chrome tab
 
 Custom-made Chrome extension to capture audio from Youtube and process its audio signal using Meyda JavaScript package. We can choose tab from the dropdown menu to select tab with Chloe Ting's video.
 
-The default sample length is 700ms. Meaning, audio features are calculated from that 700ms time frame, which counted as one dataset. Each dataset can be labeled by selecting one of the three button on top marked as `CHLOE`, `BEEP`, `MUSIC`,
+![Data collection Chrome extension](/assets/readme/images/data_collection_ext.png)
+
+The default sample length is 700ms. Meaning, audio features are calculated from that 700ms time frame, which counted as one dataset. Each dataset can be labeled by selecting one of the three button on top marked as `CHLOE`, `BEEP`, and `MUSIC`.
 
 **Classes**
 
@@ -41,7 +43,7 @@ The default sample length is 700ms. Meaning, audio features are calculated from 
 - Beep is the countdown timer
 - Music is background music during the workout
 
-We can export data collected into a CSV file. More detail on usage, implementation, and further development can be found on `README.md` of `data-collection-chrome-extension`.
+We can export features of datasets collected into a CSV file. More detail on usage, implementation, and further development can be found on `README.md` of `data-collection-chrome-extension`.
 
 ## Feature Extraction
 
@@ -55,21 +57,30 @@ Using Librosa python library, we can extract and plot audio characteristic. The 
 ![Chloe Ting's Sample](/assets/readme/images/logspectrogram_chloe_1.png)
 [Listen to sample](https://www.dropbox.com/s/zfekwto0x7o19hv/052020-0-11.wav?dl=0)
 
-_[TBD] More details on extracting and plotting with Librosa and matplotlib.pyplot [Link]_
-
-From multiple research papers and projects (see reference section), I've decided to go with these audio features:
+_[TBD] More details on extracting and plotting with Librosa and matplotlib.pyplot (add link here)_
 
 ### Extraction
 
-The goal is to extract audio features from Youtube and predict using trained model inside Chrome extension, hence using JavaScript library, Meyda. Therefore, to minimize unknown factors for the purpose of this prototype, feature extraction for training the model should also be extracted in the same manner. You can learn more about [Meyda here](https://meyda.js.org/).
+The goal is to extract audio features from Youtube and predict using trained model inside Chrome extension, hence using JavaScript library, Meyda. Therefore, to minimize unknown factors for the purpose of this prototype, feature extraction for training the model should also be extracted in the same manner. You can learn more about [Meyda here](https://meyda.js.org/). <br/>
 
-### Extracting MCFF
+From multiple research papers and projects (see reference section) along with visualizing data from various audio characteristic (add link to those plot later), I've decided to go with these audio features:
 
-### Extracting
+1. **Delta RMS** - Rate of change of the root mean square of the waveform (time-domain)
+2. **Delta Energy** - Rate of change of infinite integral of squared signal
+3. **Power Spectrum** - FFT squared (257 bins from 512 buffer size, see reference for mathematical explaination)
+4. **Delta Spectral Centroid** - Rate of change of center of gravity of frequency spectrum
+5. **Delta Spectral Flatness** - Rate of change of "noisiness" of the sound
+6. **Spectral Rolloff** - Frequency (Hz) below which contained 99% of the energy of the spectrum
+7. **Spectral Skewness** - How much the spectrum is varying from its mean spectral
+8. **Perceptual Spread** - Spread of spectral on bark scale
+9. **Perceptual Sharpness** - Sharpness on Bark loudness coefficients
+10. **MFCC** - First 13 Mel Frequency Cepstral Coefficients (add link for more detail on this)
+
+These the mixture of functions from Meyda and also manipulations those extracted value to create new feature such as the **Rate of change of RMS**. More details about those function can be found [Meyda Audio Features page](https://meyda.js.org/audio-features) and details on how I manipulate those features can be found [in the README section of Data Collection](add link here later).
 
 ## Machine Learning
 
-Using TensorFlow to implement a neural network model with three layers. Total number of features is ... and total number of class is 3. The model training session is implemented with Python. Model can later be export and use to predict with TensorFlow JS.
+Using TensorFlow to implement a neural network model with three layers. Total number of features is 21 (maybe 22 if include index of bin of max power spectrum) and total number of class is 3. The model training session is implemented with Python. Model can later be export and use to predict with TensorFlow JS.
 
 ### Neural network layers
 

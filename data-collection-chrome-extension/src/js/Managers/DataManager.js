@@ -1,10 +1,11 @@
+import { setActiveSignal, updateCount } from '../redux/actions'
+
 import CONSTANTS from '../constants/CONSTANTS'
 import Meyda from 'meyda'
 import { addLog } from '../redux/actions'
 import eventManager from './EventManager'
 import isNumber from '../Utils/isNumber'
 import { mean } from 'lodash'
-import { setActiveSignal } from '../redux/actions'
 
 const AudioContext = window.AudioContext || window.webkitAudioContext
 
@@ -16,6 +17,10 @@ class DataManager {
     this.eventManager = eventManager
     this.selectedClass = null
     this.sampleLength = CONSTANTS.DEFAULT_SAMPLE_LENGTH
+    this.count = {
+      chloe: 0,
+      music: 0
+    }
     this.currentAudioContext = null
     this.nFFTCount = 0
     this.targetNFFT = null
@@ -104,6 +109,7 @@ class DataManager {
       this.nFFTCount = 0
       console.log(mean(this.dataHolder.rms))
       this.dataHolder.rms = []
+      this.incrementDatasetCount()
       this.checkActiveSignal(rms)
     }
   }
@@ -131,6 +137,30 @@ class DataManager {
       this.activeSignal = false
       this.store.dispatch(setActiveSignal(false))
     }
+  }
+
+  incrementDatasetCount() {
+    switch (this.selectedClass) {
+      case CONSTANTS.CHLOE:
+        this.count.chloe += 1
+        this.store.dispatch(updateCount(CONSTANTS.CHLOE, this.count.chloe))
+        break
+      case CONSTANTS.MUSIC:
+        this.count.music += 1
+        this.store.dispatch(updateCount(CONSTANTS.MUSIC, this.count.music))
+        break
+      default:
+        break
+    }
+  }
+
+  clearDatasetCount() {
+    this.count = {
+      chloe: 0,
+      music: 0
+    }
+    this.store.dispatch(updateCount(CONSTANTS.CHLOE, this.count.chloe))
+    this.store.dispatch(updateCount(CONSTANTS.MUSIC, this.count.music))
   }
 }
 
