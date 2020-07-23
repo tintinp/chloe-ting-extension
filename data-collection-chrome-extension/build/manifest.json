@@ -1,0 +1,20 @@
+{
+  "name": "Chloe Ting Data Collection",
+  "version": "1.0",
+  "description": "Prototype 1",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "Chloe Ting Data Collection"
+  },
+  "background": {
+    "page": "background.html"
+  },
+  "permissions": [
+    "tabs",
+    "notifications",
+    "http://*/",
+    "https://*/"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}

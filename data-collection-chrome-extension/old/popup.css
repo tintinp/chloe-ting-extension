@@ -1,0 +1,104 @@
+body {
+  font-family: sans-serif;
+  color: #707070;
+  width: 800px;
+  background-color: #f7f7f7;
+}
+
+.header {
+  font-size: 2.75em;
+  align-items: center;
+}
+
+.dashboard {
+  width: inherit;
+}
+
+.main {
+  margin: 20px;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.half {
+  width: 50%;
+}
+
+.padding-large {
+  padding: 20px;
+}
+
+.padding-small {
+  padding: 10px;
+}
+
+.padding-mid {
+  padding: 15px;
+}
+
+.max-width {
+  width: 100%;
+}
+
+.max-height {
+  height: 500px;
+}
+
+.btn-small.class-selector {
+  background-color: #FFFFFF;
+  color: #707070;
+}
+
+.btn-small.class-selector:hover {
+  border: 2px solid #db5252;
+}
+
+.btn-small.selected {
+  background-color: #db5252;
+  color: #FFFFFF;
+}
+
+.tool-label {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.horizontal-center {
+  display: flex;
+  align-items: center;
+}
+
+i.icon-red {
+  color: #F47070;
+}
+
+.section {
+  background-color: #FFFFFF;
+  height: 100%;
+  box-shadow: 1px 1px 1px 1px #dbdbdb;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+td {
+  font-size: 0.75em;
+}
+
+textarea {
+  width: 100%;
+  height: 140px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 2px;
+  background-color: #f8f8f8;
+  resize: none;
+}
