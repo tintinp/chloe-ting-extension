@@ -26,7 +26,8 @@ const Controls = ({
   handleSelectedClass,
   handleSelectedTabId,
   handleToggle,
-  handleChangeSampleLength
+  handleChangeSampleLength,
+  port
 }) => {
   const style = useStyles()
   return (
@@ -36,6 +37,7 @@ const Controls = ({
           <ClassSelector
             selectedClass={dashboardStates.selectedClass}
             handleSelectedClass={handleSelectedClass}
+            port={port}
           />
         </Grid>
         <Grid item xs={12}>
@@ -59,6 +61,7 @@ const Controls = ({
             handleToggle={handleToggle}
             sampleLength={dashboardStates.sampleLength}
             selectedTabId={dashboardStates.selectedTabId}
+            port={port}
           />
         </Grid>
       </Grid>
@@ -67,7 +70,8 @@ const Controls = ({
 }
 
 Controls.propTypes = {
-  dashboardStates: PropTypes.object.isRequired
+  dashboardStates: PropTypes.object.isRequired,
+  port: PropTypes.object.isRequired
 }
 
 const mapStateToProps = ({ dashboardStates }) => ({

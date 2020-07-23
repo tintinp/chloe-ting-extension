@@ -1,17 +1,25 @@
 import {
   ADD_LOG,
   ADD_TABS,
-  CHANGE_DASHBOARD_STATE,
-  CHANGE_DATA_STAT,
+  CLEAR_LOG,
   REMOVE_TAB_BY_ID,
+  SELECTED_CLASS_CHANGE,
+  SELECTED_TAB_CHANGE,
   SET_SAMPLE_LENGTH,
-  TOGGLE_START_STOP
+  TOGGLE_START_STOP,
+  UPDATE_COUNT
 } from './actions'
 import { cloneDeep, isNumber } from 'lodash'
 
 import CONSTANTS from '../constants/CONSTANTS'
 import { combineReducers } from 'redux'
-import eventManager from '../Managers/EventManager'
+
+const defaultStatsState = {
+  logs: '',
+  chloeSampleCount: 0,
+  beepSampleCount: 0,
+  musicSampleCount: 0
+}
 
 const defaultDashboardState = {
   selectedTabId: null,
@@ -22,27 +30,37 @@ const defaultDashboardState = {
   tabs: {}
 }
 
-const logs = (state = {}, action) => {
+const statsStates = (state = defaultStatsState, action) => {
   switch (action.type) {
-    case CHANGE_DATA_STAT:
+    case ADD_LOG:
       return {
         ...state,
-        ...action.payload
+        logs: state.logs + `\n[${parseInt(Date.now() / 1000)}] ${action.payload}`
       }
-    case ADD_LOG:
+    case CLEAR_LOG:
+      return {
+        ...state,
+        log: ''
+      }
+    case UPDATE_COUNT:
       return {
         ...state,
         ...action.payload
       }
     default:
-      return state
+      return { ...state }
   }
 }
 
 const dashboardStates = (state = defaultDashboardState, action) => {
   let tabs
   switch (action.type) {
-    case CHANGE_DASHBOARD_STATE:
+    case SELECTED_CLASS_CHANGE:
+      return {
+        ...state,
+        ...action.payload
+      }
+    case SELECTED_TAB_CHANGE:
       return {
         ...state,
         ...action.payload
@@ -69,15 +87,6 @@ const dashboardStates = (state = defaultDashboardState, action) => {
         tabs
       }
     case TOGGLE_START_STOP:
-      if (state.collectingData) {
-        eventManager.sendMessage(CONSTANTS.EVENTS.STOP_COLLECTING_DATA)
-      } else {
-        eventManager.sendMessage(CONSTANTS.EVENTS.START_COLLECTING_DATA, {
-          selectedTabId: state.selectedTabId,
-          selectedClass: state.selectedClass,
-          sampleLength: state.sampleLength
-        })
-      }
       return {
         ...state,
         collectingData: !state.collectingData
@@ -95,7 +104,7 @@ const dashboardStates = (state = defaultDashboardState, action) => {
 
 const mainReducers = combineReducers({
   dashboardStates,
-  logs
+  statsStates
 })
 
 export default mainReducers

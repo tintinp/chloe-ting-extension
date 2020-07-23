@@ -41,3 +41,14 @@ body {
   align-items: center;
 }
 
+.logs {
+  width: 90%;
+  height: 240px;
+  margin-left: 12px;
+  margin-top: 10px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 2px;
+  background-color: #f8f8f8;
+  resize: none;
+}

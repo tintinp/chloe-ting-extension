@@ -31,7 +31,6 @@
 
   // Peer connection set up
   let peerConnection
-  let time = Date.now()
   const config = {
     iceServers: [
       {

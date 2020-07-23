@@ -1,8 +1,7 @@
-import '../../../style/dashboard.css'
-
 import React, { useEffect, useState } from 'react'
 
 import Button from '@material-ui/core/Button'
+import CONSTANTS from '../../constants/CONSTANTS'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormGroup from '@material-ui/core/FormGroup'
 import PropTypes from 'prop-types'
@@ -38,7 +37,7 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-const Tasks = ({ collectingData, handleToggle, sampleLength, selectedTabId }) => {
+const Tasks = ({ collectingData, handleToggle, sampleLength, selectedTabId, port }) => {
   const style = useStyles()
   const [canStart, setCanStart] = useState(false)
 
@@ -51,6 +50,14 @@ const Tasks = ({ collectingData, handleToggle, sampleLength, selectedTabId }) =>
   }, [sampleLength, selectedTabId])
 
   const onToggle = () => {
+    if (collectingData) {
+      port.postMessage({ type: CONSTANTS.EVENTS.STOP_COLLECTING_DATA })
+    } else {
+      port.postMessage({
+        type: CONSTANTS.EVENTS.START_COLLECTING_DATA,
+        payload: { selectedTabId }
+      })
+    }
     handleToggle()
   }
 
@@ -92,7 +99,8 @@ Tasks.propTypes = {
   collectingData: PropTypes.bool.isRequired,
   handleToggle: PropTypes.func.isRequired,
   sampleLength: PropTypes.any,
-  selectedTabId: PropTypes.any
+  selectedTabId: PropTypes.any,
+  port: PropTypes.object.isRequired
 }
 
 export default Tasks

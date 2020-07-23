@@ -5,15 +5,16 @@ const MAX_RETRY = 5
 const RETRY_WAIT_TIME = 500
 
 class AudioContextManager {
-  constructor() {
+  constructor(options) {
     this.peerReceiver = null
     this.stream = null
+    this.store = options.store
   }
 
-  async getAudioStream(tabId) {
-    console.log('Set up WebRTC peer to receiver audio from tab', tabId)
+  async getAudioStream(selectedTabId) {
+    console.log('Set up WebRTC peer to receiver audio from tab', selectedTabId)
     this.peerReceiver = new WebRTCClient()
-    chrome.tabs.executeScript(tabId, {
+    chrome.tabs.executeScript(selectedTabId, {
       file: 'getAudioViaWebRTC.js'
     })
 
@@ -30,7 +31,6 @@ class AudioContextManager {
         this.stream = this.peerReceiver.getStream()
       }
     }
-
     console.log('Got audio stream')
     return this.stream
   }

@@ -1,5 +1,3 @@
-import '../../../style/dashboard.css'
-
 import React, { useEffect } from 'react'
 import { keys, map } from 'lodash'
 

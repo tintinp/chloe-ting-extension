@@ -1,7 +1,11 @@
+import '../../style/dashboard.css'
+
 import Controls from './Controls/Controls'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
+import PropTypes from 'prop-types'
 import React from 'react'
+import Stats from './Stats/Stats'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(() => ({
@@ -17,10 +21,11 @@ const useStyles = makeStyles(() => ({
     marginLeft: 5,
     marginRight: 5,
     marginTop: 10,
-    marginBottom: 10
+    marginBottom: 10,
+    height: 460
   }
 }))
-const Dashboard = () => {
+const Dashboard = ({ port }) => {
   const classes = useStyles()
 
   return (
@@ -29,18 +34,22 @@ const Dashboard = () => {
       <Grid container spacing={1}>
         <Grid item xs={6}>
           <Paper className={classes.paper}>
-            <Controls />
+            <Controls port={port} />
           </Paper>
         </Grid>
         <Grid item xs={6}>
           <Paper className={classes.paper}>
-            <Controls />
+            <Stats />
           </Paper>
         </Grid>
         <Grid item xs={6}></Grid>
       </Grid>
     </div>
   )
+}
+
+Dashboard.propTypes = {
+  port: PropTypes.object.isRequired
 }
 
 export default Dashboard

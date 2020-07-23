@@ -1,5 +1,3 @@
-import '../../../style/dashboard.css'
-
 import CONSTANTS from '../../constants/CONSTANTS'
 import PropTypes from 'prop-types'
 import React from 'react'

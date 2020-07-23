@@ -1,5 +1,3 @@
-import '../../../style/dashboard.css'
-
 import Button from '@material-ui/core/Button'
 import CONSTANTS from '../../constants/CONSTANTS'
 import PropTypes from 'prop-types'
@@ -34,14 +32,22 @@ const useStyles = makeStyles({
   }
 })
 
-const Controls = ({ selectedClass, handleSelectedClass }) => {
+const Controls = ({ selectedClass, handleSelectedClass, port }) => {
   const btn = useStyles()
 
   const handleClickBtn = (event) => {
     const id = event.currentTarget.id
     if (selectedClass === id) {
+      port.postMessage({
+        type: CONSTANTS.EVENTS.SELECTED_CLASS_CHANGE,
+        payload: { selectedClass: null }
+      })
       handleSelectedClass(null)
     } else {
+      port.postMessage({
+        type: CONSTANTS.EVENTS.SELECTED_CLASS_CHANGE,
+        payload: { selectedClass: id }
+      })
       handleSelectedClass(id)
     }
   }
@@ -78,7 +84,8 @@ const Controls = ({ selectedClass, handleSelectedClass }) => {
 
 Controls.propTypes = {
   selectedClass: PropTypes.string,
-  handleSelectedClass: PropTypes.func.isRequired
+  handleSelectedClass: PropTypes.func.isRequired,
+  port: PropTypes.object.isRequired
 }
 
 export default Controls
