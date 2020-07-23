@@ -14,25 +14,12 @@ class EventManager extends EventEmitter {
   initHandler() {
     this.handleCrossLayerConnection = (port) => {
       if (port.name === CONSTANTS.PORTS.CROSS_LAYER) {
+        // Receive message in the form of
+        // { type: 'TYPE', payload: { key: value }}
         port.onMessage.addListener((msg) => {
-          switch (msg.type) {
-            case CONSTANTS.EVENTS.START_COLLECTING_DATA:
-              this.sendMessage(CONSTANTS.EVENTS.START_COLLECTING_DATA, {
-                selectedTabId: msg.payload.selectedTabId
-              })
-
-            case CONSTANTS.EVENTS.SELECTED_CLASS_CHANGE:
-              this.sendMessage(CONSTANTS.EVENTS.SELECTED_CLASS_CHANGE, {
-                selectedClass: msg.payload.selectedClass
-              })
-              break
-
-            case CONSTANTS.EVENTS.STOP_COLLECTING_DATA:
-              this.sendMessage(CONSTANTS.EVENTS.STOP_COLLECTING_DATA)
-              break
-            default:
-              break
-          }
+          this.sendMessage(msg.type, {
+            ...msg.payload
+          })
         })
 
         port.onDisconnect.addListener(() => {})

@@ -13,11 +13,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Parameters = ({ collectingData, handleChangeSampleLength }) => {
+const Parameters = ({ collectingData, handleChangeSampleLength, port }) => {
   const style = useStyles()
 
   const handleChange = (event) => {
-    handleChangeSampleLength(parseFloat(event.target.value))
+    const sampleLength = parseFloat(event.target.value)
+    handleChangeSampleLength(sampleLength)
+    port.postMessage({ type: CONSTANTS.EVENTS.SAMPLE_LENGTH_CHANGE, payload: { sampleLength } })
   }
 
   return (
@@ -43,7 +45,8 @@ const Parameters = ({ collectingData, handleChangeSampleLength }) => {
 
 Parameters.propTypes = {
   collectingData: PropTypes.bool.isRequired,
-  handleChangeSampleLength: PropTypes.func.isRequired
+  handleChangeSampleLength: PropTypes.func.isRequired,
+  port: PropTypes.object.isRequired
 }
 
 export default Parameters

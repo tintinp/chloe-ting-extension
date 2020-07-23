@@ -53,6 +53,7 @@ const Controls = ({
           <Parameters
             handleChangeSampleLength={handleChangeSampleLength}
             collectingData={dashboardStates.collectingData}
+            port={port}
           />
         </Grid>
         <Grid item xs={12}>

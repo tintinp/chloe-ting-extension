@@ -9,6 +9,7 @@ export const UPDATE_COUNT = 'UPDATE_COUNT'
 export const REMOVE_TAB_BY_ID = 'REMOVE_TAB_BY_ID'
 export const TOGGLE_START_STOP = 'TOGGLE_START_STOP'
 export const SET_SAMPLE_LENGTH = 'SET_SAMPLE_LENGTH'
+export const SET_ACTIVE_SIGNAL = 'SET_ACTIVE_SIGNAL'
 
 export const setSelectedClass = (selectedClass) => {
   return {
@@ -92,5 +93,12 @@ export const addLog = (text) => {
 export const clearLog = () => {
   return {
     type: CLEAR_LOG
+  }
+}
+
+export const setActiveSignal = (bool) => {
+  return {
+    type: SET_ACTIVE_SIGNAL,
+    payload: { activeSignal: bool }
   }
 }

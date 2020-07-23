@@ -5,6 +5,7 @@ import {
   REMOVE_TAB_BY_ID,
   SELECTED_CLASS_CHANGE,
   SELECTED_TAB_CHANGE,
+  SET_ACTIVE_SIGNAL,
   SET_SAMPLE_LENGTH,
   TOGGLE_START_STOP,
   UPDATE_COUNT
@@ -96,6 +97,11 @@ const dashboardStates = (state = defaultDashboardState, action) => {
       return {
         ...state,
         sampleLength: length
+      }
+    case SET_ACTIVE_SIGNAL:
+      return {
+        ...state,
+        ...action.payload
       }
     default:
       return { ...state }

@@ -51,6 +51,10 @@ const attachCrossLayerListeners = () => {
   eventManager.on(CONSTANTS.EVENTS.SELECTED_CLASS_CHANGE, ({ selectedClass }) => {
     dataManager.selectedClassChange(selectedClass)
   })
+
+  eventManager.on(CONSTANTS.EVENTS.SAMPLE_LENGTH_CHANGE, ({ sampleLength }) => {
+    dataManager.sampleLengthChange(sampleLength)
+  })
 }
 
 const main = () => {
