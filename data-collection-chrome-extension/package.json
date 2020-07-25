@@ -4,7 +4,7 @@
   "description": "Chrome extension for data collection",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "webpack-dev-server --mode=development",
     "build": "webpack --mode=production"
   },
@@ -44,6 +44,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "html-loader": "^1.1.0",
     "html-webpack-plugin": "^4.3.0",
+    "jest": "^26.1.0",
     "mini-css-extract-plugin": "^0.9.0",
     "prettier": "2.0.5",
     "style-loader": "^1.2.1",

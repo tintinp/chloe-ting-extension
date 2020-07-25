@@ -3,6 +3,7 @@ import { addLog, setActiveSignal, updateCount } from '../redux/actions'
 
 import CONSTANTS from '../constants/CONSTANTS'
 import Meyda from 'meyda'
+import exportCSV from '../Utils/exportCSV'
 import isNumber from '../Utils/isNumber'
 
 // Audio context of the browser
@@ -39,6 +40,7 @@ class DataManager {
       chloe: 0,
       music: 0
     }
+    this.classChangeTimestamp = []
     this.data = this.getEmptyDataHolder()
     this.delta = this.getEmptyDataHolder()
     this.dataInCurrentFrame = this.getEmptyDataHolder()
@@ -58,6 +60,7 @@ class DataManager {
     const source = this.currentAudioContext.createMediaStreamSource(stream)
     this.analyzer = this.createAnalyzer(source)
     this.analyzer.start()
+    this.running = true
     this.store.dispatch(addLog(`Start collecting data`))
     console.log('Start collecting data...')
   }
@@ -73,6 +76,7 @@ class DataManager {
     this.bufferSize = null
     this.nFrame = 0
     this.targetNFrame = null
+    this.running = false
     this.store.dispatch(setActiveSignal(false))
     this.store.dispatch(addLog('Stop collecting data'))
   }
@@ -80,6 +84,7 @@ class DataManager {
   selectedClassChange(selectedClass) {
     this.selectedClass = selectedClass
     if (this.running && selectedClass !== null) {
+      this.classChangeTimestamp.push(Date.now())
     }
   }
 
@@ -88,13 +93,9 @@ class DataManager {
   }
 
   export() {
-    // Remove data that might be due to delay in human speed switching class in the UI
-
-    // Export to CSV
-
-    // Reset data and count
+    exportCSV(this.data, this.delta, this.classChangeTimestamp)
     this.reset()
-    console.log('Exported data to CSV')
+    console.log('Exported data CSV')
   }
 
   // --------------------------------------------------------------------------
@@ -129,7 +130,7 @@ class DataManager {
       } else {
         // If class is selected
         if (this.selectedClass) {
-          // Get mean of values in current frame along with delta between each sample in the frame
+          // Store mean of values in current frame along with delta between each sample in the frame
           FEATURES_SINGLE_VALUE.forEach((featureName) => {
             const dataInCurrentFrame = this.dataInCurrentFrame[featureName]
             const data = this.data[featureName]
@@ -153,10 +154,10 @@ class DataManager {
             }
           })
 
-          // Get mean MFCC in the current frame, mean along axis 0
+          // Store mean MFCC in the current frame, mean along axis 0
           this.data.mfcc.push(mean(this.dataInCurrentFrame.mfcc, 0))
 
-          // Get mean power spectrum in the current frame, mean along axis 0
+          // Store mean power spectrum in the current frame, mean along axis 0
           this.data.powerSpectrum.push(
             mean(
               // Convert Float32Array into normal array
@@ -165,8 +166,13 @@ class DataManager {
             )
           )
 
-          // Get class of audio of current frame
-          this.data.class.push(this.getClass())
+          // Store class and timestamp
+          const classInt = this.getClass()
+          const now = Date.now()
+          this.data.class.push(classInt)
+          this.delta.class.push(classInt)
+          this.data.timestamp.push(now)
+          this.delta.timestamp.push(now)
 
           // Update class count
           this.incrementDatasetCount()
@@ -180,7 +186,6 @@ class DataManager {
 
         // Update signal status
         this.checkActiveSignal(features.rms)
-        console.log(this.data)
       }
     }
   }
@@ -194,7 +199,8 @@ class DataManager {
     // TARGET_FRAME_LENGTH = Default to 25ms of audio for each FFT calculation
 
     // Need to calculate buffer size (as power of 2) in order for ~25ms of audio to be used in
-    // calculating FFT and other featuers. This will depend on the sample rate of the browser.
+    // calculating FFT and other featuers. This will depend on the sample rate of the browser
+    // Multiple research papers consider 20-25ms an optimum value for MFCC
 
     // Chrome sample rate is usually 48000 samples per second
     // Therefore, buffer size should be 0.025 * 48000 = 1200
@@ -267,7 +273,8 @@ class DataManager {
       perceptualSharpness: [],
       mfcc: [],
       powerSpectrum: [],
-      class: []
+      class: [],
+      timestamp: []
     }
   }
 
@@ -288,6 +295,7 @@ class DataManager {
     this.count.chloe = 0
     this.count.music = 0
     this.nFrame = 0
+    this.classChangeTimestamp = []
   }
 }
 
