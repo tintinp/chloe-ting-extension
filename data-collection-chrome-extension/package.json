@@ -14,6 +14,7 @@
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "lodash": "^4.17.19",
+    "mathjs": "^7.1.0",
     "meyda": "^5.0.3",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
