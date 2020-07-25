@@ -41,9 +41,8 @@ class DataManager {
       music: 0
     }
     this.classChangeTimestamp = []
-    this.data = this.getEmptyDataHolder()
-    this.delta = this.getEmptyDataHolder()
-    this.dataInCurrentFrame = this.getEmptyDataHolder()
+    this.data = this.getEmptyData()
+    this.dataInFrames = this.getEmptyDataInFrames()
   }
 
   // --------------------------------------------------------------------------
@@ -93,7 +92,7 @@ class DataManager {
   }
 
   export() {
-    exportCSV(this.data, this.delta, this.classChangeTimestamp)
+    exportCSV(this.data, this.classChangeTimestamp)
     this.reset()
     console.log('Exported data CSV')
   }
@@ -116,78 +115,65 @@ class DataManager {
   }
 
   extractFeatures(features) {
-    // Discard when any of the features have invalid value
-    if (this.isValidValue(features)) {
-      if (this.nFrame < this.targetNFrame) {
-        // Accumulate features in current time frame
-        ALL_FEATURES.forEach((featureName) => {
-          const value = features[featureName]
-          this.dataInCurrentFrame[featureName].push(value)
-        })
+    // Discard when any of the features have invalid value or class not selected
+    if (this.isValidValue(features) && this.selectedClass) {
+      ALL_FEATURES.forEach((featureName) => {
+        const value = features[featureName]
+        this.dataInFrames[featureName].push(value)
+      })
 
-        // Increment frame
-        this.nFrame += 1
-      } else {
-        // If class is selected
-        if (this.selectedClass) {
-          // Store mean of values in current frame along with delta between each sample in the frame
-          FEATURES_SINGLE_VALUE.forEach((featureName) => {
-            const dataInCurrentFrame = this.dataInCurrentFrame[featureName]
-            const data = this.data[featureName]
-            const delta = this.delta[featureName]
-            const arrLength = data.length
-
-            if (dataInCurrentFrame.length > 0) {
-              const avg = mean(dataInCurrentFrame)
-              const d1 = arrLength < 1 ? null : abs(avg - data[arrLength - 1])
-              const d2 = arrLength < 2 ? null : abs(avg - data[arrLength - 2])
-
-              if (d1 !== null) {
-                delta.push(Math.max(d1, d2))
-              } else {
-                delta.push(NaN)
-              }
-              data.push(avg)
-            } else {
-              data.push(NaN)
-              delta.push(NaN)
-            }
-          })
-
-          // Store mean MFCC in the current frame, mean along axis 0
-          this.data.mfcc.push(mean(this.dataInCurrentFrame.mfcc, 0))
-
-          // Store mean power spectrum in the current frame, mean along axis 0
-          this.data.powerSpectrum.push(
-            mean(
-              // Convert Float32Array into normal array
-              this.dataInCurrentFrame.powerSpectrum.map((arr) => Array.from(arr)),
-              0
-            )
-          )
-
-          // Store class and timestamp
-          const classInt = this.getClass()
-          const now = Date.now()
-          this.data.class.push(classInt)
-          this.delta.class.push(classInt)
-          this.data.timestamp.push(now)
-          this.delta.timestamp.push(now)
-
-          // Update class count
-          this.incrementDatasetCount()
-        }
-
-        // Reset current frame data
-        this.dataInCurrentFrame = this.getEmptyDataHolder()
-
-        // Reset number of samples needed for time frame
-        this.nFrame = 0
-
-        // Update signal status
+      if (this.nFrame === this.targetNFrame - 1) {
+        this.reduceDataInFrames()
+        this.incrementDatasetCount()
+        this.dataInFrames = this.getEmptyDataInFrames()
         this.checkActiveSignal(features.rms)
+        this.nFrame = 0
+      } else {
+        this.nFrame += 1
       }
     }
+  }
+
+  // Store mean of values in current frame along with delta between each sample in the frame
+  reduceDataInFrames() {
+    FEATURES_SINGLE_VALUE.forEach((featureName) => {
+      const dataInFrames = this.dataInFrames[featureName]
+      const data = this.data[featureName]
+      const delta = this.data['delta_' + featureName]
+      const arrLength = data.length
+
+      if (dataInFrames.length > 0) {
+        const avg = mean(dataInFrames)
+        const d1 = arrLength < 1 ? null : abs(avg - data[arrLength - 1])
+        const d2 = arrLength < 2 ? null : abs(avg - data[arrLength - 2])
+
+        if (d1 !== null) {
+          delta.push(Math.max(d1, d2))
+        } else {
+          delta.push(NaN)
+        }
+        data.push(avg)
+      } else {
+        data.push(NaN)
+        delta.push(NaN)
+      }
+    })
+
+    // Store mean MFCC in the current frame, mean along axis 0
+    this.data.mfcc.push(mean(this.dataInFrames.mfcc, 0))
+
+    // Store mean power spectrum in the current frame, mean along axis 0
+    this.data.powerSpectrum.push(
+      mean(
+        // Convert Float32Array into normal array
+        this.dataInFrames.powerSpectrum.map((arr) => Array.from(arr)),
+        0
+      )
+    )
+
+    // Store class and timestamp
+    this.data.class.push(CONSTANTS.CLASS_TO_NUMBER[this.selectedClass])
+    this.data.timestamp.push(Date.now())
   }
 
   calculateDataNeededPerSampleLength() {
@@ -237,6 +223,7 @@ class DataManager {
     }
   }
 
+  // Update class count
   incrementDatasetCount() {
     switch (this.selectedClass) {
       case CONSTANTS.CHLOE:
@@ -261,7 +248,32 @@ class DataManager {
     this.store.dispatch(updateCount(CONSTANTS.MUSIC, this.count.music))
   }
 
-  getEmptyDataHolder() {
+  getEmptyData() {
+    return {
+      rms: [],
+      delta_rms: [],
+      energy: [],
+      delta_energy: [],
+      spectralCentroid: [],
+      delta_spectralCentroid: [],
+      spectralFlatness: [],
+      delta_spectralFlatness: [],
+      spectralRolloff: [],
+      delta_spectralRolloff: [],
+      spectralSkewness: [],
+      delta_spectralSkewness: [],
+      perceptualSpread: [],
+      delta_perceptualSpread: [],
+      perceptualSharpness: [],
+      delta_perceptualSharpness: [],
+      mfcc: [],
+      powerSpectrum: [],
+      class: [],
+      timestamp: []
+    }
+  }
+
+  getEmptyDataInFrames() {
     return {
       rms: [],
       energy: [],
@@ -272,9 +284,7 @@ class DataManager {
       perceptualSpread: [],
       perceptualSharpness: [],
       mfcc: [],
-      powerSpectrum: [],
-      class: [],
-      timestamp: []
+      powerSpectrum: []
     }
   }
 
@@ -284,14 +294,9 @@ class DataManager {
     }, true)
   }
 
-  getClass() {
-    return CONSTANTS.CLASS_TO_NUMBER[this.selectedClass]
-  }
-
   reset() {
-    this.data = this.getEmptyDataHolder()
-    this.delta = this.getEmptyDataHolder()
-    this.dataInCurrentFrame = this.getEmptyDataHolder()
+    this.data = this.getEmptyData()
+    this.dataInFrames = this.getEmptyDataInFrames()
     this.count.chloe = 0
     this.count.music = 0
     this.nFrame = 0
