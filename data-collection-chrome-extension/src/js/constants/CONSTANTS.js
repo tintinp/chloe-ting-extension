@@ -43,7 +43,8 @@ const CONSTANTS = {
       'perceptualSharpness'
     ],
     ARRAY: ['mfcc', 'powerSpectrum']
-  }
+  },
+  LATENCY_TIME_TO_DELETE_DATASET: 1000 // ms
 }
 
 export default CONSTANTS

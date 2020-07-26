@@ -1,3 +1,4 @@
+import CONSTANTS from '../constants/CONSTANTS'
 import isNumber from './isNumber'
 import { keys } from 'lodash'
 
@@ -35,8 +36,6 @@ const generateCSVString = (data, classChangeTimestamp) => {
       }
     }
   }
-  // const result = resultArray.join('\r\n')
-  // console.log('this is result', result)
   return resultArray.join('\r\n')
 }
 
@@ -44,7 +43,7 @@ const validTimestamp = (time, timestampArray) => {
   // Use for loop so it can break early
   for (let i = 0; i < timestampArray.length; i++) {
     const timestamp = timestampArray[i]
-    if (time > timestamp - 1000 && time <= timestamp) {
+    if (time > timestamp - CONSTANTS.LATENCY_TIME_TO_DELETE_DATASET && time <= timestamp) {
       return false
     }
   }
