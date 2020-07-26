@@ -4,7 +4,7 @@
   "description": "Chrome extension for data collection",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "bash test.sh",
     "dev": "webpack-dev-server --mode=development",
     "build": "webpack --mode=production"
   },
@@ -13,7 +13,9 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "dateformat": "^3.0.3",
     "lodash": "^4.17.19",
+    "mathjs": "^7.1.0",
     "meyda": "^5.0.3",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
@@ -43,6 +45,8 @@
     "eslint-plugin-standard": "^4.0.1",
     "html-loader": "^1.1.0",
     "html-webpack-plugin": "^4.3.0",
+    "jest": "^26.1.0",
+    "jest-date-mock": "^1.0.8",
     "mini-css-extract-plugin": "^0.9.0",
     "prettier": "2.0.5",
     "style-loader": "^1.2.1",

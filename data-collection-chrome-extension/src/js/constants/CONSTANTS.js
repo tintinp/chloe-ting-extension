@@ -2,12 +2,12 @@ const CONSTANTS = {
   CHLOE: 'CHLOE',
   BEEP: 'BEEP',
   MUSIC: 'MUSIC',
-  DEFAULT_SAMPLE_LENGTH: 700,
   EVENTS: {
     START_COLLECTING_DATA: 'START_COLLECTING_DATA',
     STOP_COLLECTING_DATA: 'STOP_COLLECTING_DATA',
     SELECTED_CLASS_CHANGE: 'SELECTED_CLASS_CHANGE',
-    SAMPLE_LENGTH_CHANGE: 'SAMPLE_LENGTH_CHANGE'
+    SAMPLE_LENGTH_CHANGE: 'SAMPLE_LENGTH_CHANGE',
+    EXPORT: 'EXPORT'
   },
   WEB_RTC_EVENTS: {
     PEER_CONNECTION_SENDER_READY: 'PEER_CONNECTION_SENDER_READY',
@@ -23,7 +23,28 @@ const CONSTANTS = {
     WEB_RTC: 'WEB_RTC',
     CROSS_LAYER: 'CROSS_LAYER'
   },
-  BUFFER_SIZE: 512
+  DEFAULT_SAMPLE_LENGTH: 700,
+  TARGET_FRAME_LENGTH: 0.025, // 25 milliseconds
+  N_MFCC: 13,
+  CLASS_TO_NUMBER: {
+    CHLOE: 0,
+    BEEP: 1,
+    MUSIC: 2
+  },
+  AUDIO_FEATURES: {
+    SINGLE_VALUE: [
+      'rms',
+      'energy',
+      'spectralCentroid',
+      'spectralFlatness',
+      'spectralRolloff',
+      'spectralSkewness',
+      'perceptualSpread',
+      'perceptualSharpness'
+    ],
+    ARRAY: ['mfcc', 'powerSpectrum']
+  },
+  LATENCY_TIME_TO_DELETE_DATASET: 1000 // ms
 }
 
 export default CONSTANTS

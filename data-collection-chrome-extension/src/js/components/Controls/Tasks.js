@@ -37,7 +37,14 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-const Tasks = ({ collectingData, handleToggle, sampleLength, selectedTabId, port }) => {
+const Tasks = ({
+  collectingData,
+  handleToggle,
+  sampleLength,
+  selectedTabId,
+  exportingCSV,
+  port
+}) => {
   const style = useStyles()
   const [canStart, setCanStart] = useState(false)
 
@@ -59,6 +66,10 @@ const Tasks = ({ collectingData, handleToggle, sampleLength, selectedTabId, port
       })
     }
     handleToggle()
+  }
+
+  const onClickExport = () => {
+    port.postMessage({ type: CONSTANTS.EVENTS.EXPORT })
   }
 
   return (
@@ -83,10 +94,10 @@ const Tasks = ({ collectingData, handleToggle, sampleLength, selectedTabId, port
         </FormGroup>
 
         <Button
-          disabled={collectingData}
+          disabled={collectingData || exportingCSV}
           id="export-btn"
           className={collectingData ? style.buttonDisabled : style.button}
-          onClick={() => {}}
+          onClick={onClickExport}
         >
           Export CSV
         </Button>
@@ -100,6 +111,7 @@ Tasks.propTypes = {
   handleToggle: PropTypes.func.isRequired,
   sampleLength: PropTypes.any,
   selectedTabId: PropTypes.any,
+  exportingCSV: PropTypes.bool.isRequired,
   port: PropTypes.object.isRequired
 }
 
