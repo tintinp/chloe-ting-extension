@@ -1,6 +1,10 @@
-const { keys, reduce, mean, cloneDeep } = require('lodash')
-const { advanceTo, clear, advanceBy } = require('jest-date-mock')
-const { default: CONSTANTS } = require('../../constants/CONSTANTS')
+jest.mock('../../constants/CONSTANTS')
+
+import { advanceBy, advanceTo, clear } from 'jest-date-mock'
+import { cloneDeep, keys, mean, reduce } from 'lodash'
+
+import CONSTANTS from '../../constants/CONSTANTS'
+import { abs } from 'mathjs'
 
 describe('DataManager', () => {
   beforeEach(() => {
@@ -34,6 +38,27 @@ describe('DataManager', () => {
     const dataManager = new DataManager({ store: fakeStore })
 
     expect(dataManager).toBeInstanceOf(DataManager)
+  })
+
+  test('getEmptyData and getEmptyDataInFrames', () => {
+    const DataManager = require('../DataManager').default
+
+    const dataManager = new DataManager({ store: fakeStore })
+
+    const expectedData = {
+      class: [],
+      timestamp: [],
+      a: [],
+      b: [],
+      delta_a: [],
+      delta_b: [],
+      array1: [],
+      array2: []
+    }
+    const expectedDataInFrames = { a: [], b: [], array1: [], array2: [] }
+
+    expect(dataManager.getEmptyData()).toStrictEqual(expectedData)
+    expect(dataManager.getEmptyDataInFrames()).toStrictEqual(expectedDataInFrames)
   })
 
   test('Calculate target frames per dataset and buffer size', () => {
@@ -71,31 +96,28 @@ describe('DataManager', () => {
     // ------------------------------------------------------------------
     // Set up dataManager state
     // ------------------------------------------------------------------
-
+    // This should give buffer size of 1024 and target frames of 3
     dataManager.currentAudioContext = {}
-    dataManager.currentAudioContext.sampleRate = 48000
+    dataManager.currentAudioContext.sampleRate = 41000 // 41000Hz
+    dataManager.sampleLengthChange(75) // 75ms
     dataManager.calculateDataNeededPerSampleLength()
 
     const features = {
-      rms: 1,
-      energy: 1,
-      spectralCentroid: 1,
-      spectralFlatness: 1,
-      spectralRolloff: 1,
-      spectralSkewness: 1,
-      perceptualSharpness: 1,
-      perceptualSpread: 1,
-      mfcc: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
-      powerSpectrum: [...Array(10)].map(() => 1)
+      a: 1,
+      b: 1,
+      array1: [1, 2, 3],
+      array2: [1, 2, 3]
     }
 
     // ------------------------------------------------------------------
     // Set up result
     // ------------------------------------------------------------------
-    const expectedDataInFrames = {}
-    keys(features).forEach((key) => {
-      expectedDataInFrames[key] = [features[key]]
-    })
+    const expectedDataInFrames = {
+      a: [1],
+      b: [1],
+      array1: [[1, 2, 3]],
+      array2: [[1, 2, 3]]
+    }
 
     // ------------------------------------------------------------------
     // Run test
@@ -106,7 +128,7 @@ describe('DataManager', () => {
     expect(dataManager.dataInFrames).toStrictEqual(expectedDataInFrames)
   })
 
-  test('extractFeatures: 32 extraction frames for 1 dataset', () => {
+  test('extractFeatures: 3 extraction frames for 1 dataset', () => {
     const DataManager = require('../DataManager').default
 
     const dataManager = new DataManager({ store: fakeStore })
@@ -114,87 +136,66 @@ describe('DataManager', () => {
     // ------------------------------------------------------------------
     // Set up dataManager state
     // ------------------------------------------------------------------
+    // This should give buffer size of 1024 and target frames of 3
     dataManager.currentAudioContext = {}
-    dataManager.currentAudioContext.sampleRate = 48000
+    dataManager.currentAudioContext.sampleRate = 41000 // 41000Hz
+    dataManager.sampleLengthChange(75) // 75ms
     dataManager.calculateDataNeededPerSampleLength()
-    dataManager.selectedClassChange(CONSTANTS.CHLOE)
 
-    const featuresArray = []
+    const features_frame_1 = {
+      a: 1,
+      b: 1,
+      array1: [1, 2, 3],
+      array2: new Float32Array([1, 1, 1])
+    }
 
-    for (let i = 0; i < 32; i++) {
-      featuresArray.push({
-        rms: i,
-        energy: i,
-        spectralCentroid: i,
-        spectralFlatness: i,
-        spectralRolloff: i,
-        spectralSkewness: i,
-        perceptualSharpness: i,
-        perceptualSpread: i,
-        mfcc: [i, i + 1, i + 2],
-        powerSpectrum: [...Array(5)].map(() => 1)
-      })
+    const features_frame_2 = {
+      a: 2,
+      b: 10,
+      array1: [2, 3, 4],
+      array2: new Float32Array([2, 2, 2])
+    }
+
+    const features_frame_3 = {
+      a: 3,
+      b: 20,
+      array1: [3, 4, 5],
+      array2: new Float32Array([3, 3, 3])
     }
 
     // ------------------------------------------------------------------
     // Set up result
     // ------------------------------------------------------------------
-    const expectedDataIn32ndFrame = reduce(
-      featuresArray,
-      (acc, features) => {
-        keys(features).forEach((key) => {
-          if (!acc[key]) {
-            acc[key] = []
-          }
-          acc[key].push(features[key])
-        })
-        return acc
-      },
-      {}
-    )
-
-    const expectedDataIn31stFrame = cloneDeep(expectedDataIn32ndFrame)
-    keys(expectedDataIn31stFrame).forEach((key) => {
-      expectedDataIn31stFrame[key].pop()
-    })
-
-    const valueArray = [mean([...Array(32).keys()])]
-    const deltaArray = [NaN]
+    const expectedDataInFrame_2 = {
+      a: [1, 2],
+      b: [1, 10],
+      array1: [
+        [1, 2, 3],
+        [2, 3, 4]
+      ],
+      array2: [new Float32Array([1, 1, 1]), new Float32Array([2, 2, 2])]
+    }
 
     const expectedData = {
-      rms: valueArray,
-      delta_rms: deltaArray,
-      energy: valueArray,
-      delta_energy: deltaArray,
-      spectralCentroid: valueArray,
-      delta_spectralCentroid: deltaArray,
-      spectralFlatness: valueArray,
-      delta_spectralFlatness: deltaArray,
-      spectralRolloff: valueArray,
-      delta_spectralRolloff: deltaArray,
-      spectralSkewness: valueArray,
-      delta_spectralSkewness: deltaArray,
-      perceptualSpread: valueArray,
-      delta_perceptualSpread: deltaArray,
-      perceptualSharpness: valueArray,
-      delta_perceptualSharpness: deltaArray,
-      mfcc: [[mean(range(32, 0)), mean(range(32, 1)), mean(range(32, 2))]],
-      powerSpectrum: [[...Array(5)].map(() => 1)],
       class: [0],
-      timestamp: [Date.now()]
+      timestamp: [Date.now()],
+      a: [2],
+      delta_a: [NaN],
+      b: [10.3333333],
+      delta_b: [NaN],
+      array1: [[2, 3, 4]],
+      array2: [[2, 2, 2]]
     }
 
     // ------------------------------------------------------------------
     // Run test
     // ------------------------------------------------------------------
-    featuresArray.forEach((features, iteration) => {
-      if (iteration === 31) {
-        expect(dataManager.dataInFrames).toStrictEqual(expectedDataIn31stFrame)
-      }
-      dataManager.extractFeatures(features)
-    })
+    dataManager.selectedClassChange(CONSTANTS.CHLOE)
+    dataManager.extractFeatures(features_frame_1)
+    dataManager.extractFeatures(features_frame_2)
+    expect(dataManager.dataInFrames).toStrictEqual(expectedDataInFrame_2)
 
-    expect(dataManager.dataInFrames).toStrictEqual(dataManager.getEmptyDataInFrames())
+    dataManager.extractFeatures(features_frame_3)
     expect(dataManager.data).toStrictEqual(expectedData)
   })
 
@@ -206,189 +207,170 @@ describe('DataManager', () => {
     // ------------------------------------------------------------------
     // Set up dataManager state
     // ------------------------------------------------------------------
+    // This should give buffer size of 1024 and target frames of 3
     dataManager.currentAudioContext = {}
-    dataManager.currentAudioContext.sampleRate = 48000
+    dataManager.currentAudioContext.sampleRate = 41000 // 41000Hz
+    dataManager.sampleLengthChange(75) // 75ms
     dataManager.calculateDataNeededPerSampleLength()
 
-    const featuresArray = []
+    // ------------------------------------------------------------------
+    // Set up dataset 1
+    // ------------------------------------------------------------------
 
-    for (let i = 0; i < 32; i++) {
-      featuresArray.push({
-        rms: i,
-        energy: i,
-        spectralCentroid: i,
-        spectralFlatness: i,
-        spectralRolloff: i,
-        spectralSkewness: i,
-        perceptualSharpness: i,
-        perceptualSpread: i,
-        mfcc: [i, i + 1, i + 2],
-        powerSpectrum: [...Array(5)].map(() => 1)
-      })
+    let features_frame_1 = {
+      a: 1,
+      b: 1,
+      array1: [1, 2, 3],
+      array2: new Float32Array([1, 1, 1])
     }
 
-    // ------------------------------------------------------------------
-    // Set up result
-    // ------------------------------------------------------------------
-    const valueArray = [
-      mean([...Array(32).keys()]),
-      mean([...Array(32).keys()]),
-      mean([...Array(32).keys()])
-    ]
-    const deltaArray = [NaN, 0, 0]
-    const eachMFCC = [mean(range(32, 0)), mean(range(32, 1)), mean(range(32, 2))]
-    const mfccArray = [eachMFCC, eachMFCC, eachMFCC]
-    const eachPowerSpectrum = [...Array(5)].map(() => 1)
-    const powerSpectrumArray = [eachPowerSpectrum, eachPowerSpectrum, eachPowerSpectrum]
+    let features_frame_2 = {
+      a: 2,
+      b: 10,
+      array1: [2, 3, 4],
+      array2: new Float32Array([2, 2, 2])
+    }
 
-    const expectedData = {
-      rms: valueArray,
-      delta_rms: deltaArray,
-      energy: valueArray,
-      delta_energy: deltaArray,
-      spectralCentroid: valueArray,
-      delta_spectralCentroid: deltaArray,
-      spectralFlatness: valueArray,
-      delta_spectralFlatness: deltaArray,
-      spectralRolloff: valueArray,
-      delta_spectralRolloff: deltaArray,
-      spectralSkewness: valueArray,
-      delta_spectralSkewness: deltaArray,
-      perceptualSpread: valueArray,
-      delta_perceptualSpread: deltaArray,
-      perceptualSharpness: valueArray,
-      delta_perceptualSharpness: deltaArray,
-      mfcc: mfccArray,
-      powerSpectrum: powerSpectrumArray,
-      class: [0, 0, 2],
-      timestamp: [Date.now(), Date.now() + 2000, Date.now() + 3000]
+    let features_frame_3 = {
+      a: 3,
+      b: 20,
+      array1: [3, 4, 5],
+      array2: new Float32Array([3, 3, 3])
+    }
+
+    let expectedData = {
+      class: [0],
+      timestamp: [Date.now()],
+      a: [2],
+      delta_a: [NaN],
+      b: [10.3333333],
+      delta_b: [NaN],
+      array1: [[2, 3, 4]],
+      array2: [[2, 2, 2]]
     }
 
     // ------------------------------------------------------------------
     // Run test
     // ------------------------------------------------------------------
     dataManager.selectedClassChange(CONSTANTS.CHLOE)
-    featuresArray.forEach((features) => {
-      dataManager.extractFeatures(features)
-    })
+    dataManager.extractFeatures(features_frame_1)
+    dataManager.extractFeatures(features_frame_2)
+    dataManager.extractFeatures(features_frame_3)
     advanceBy(1000)
-
-    dataManager.selectedClassChange(null)
-    featuresArray.forEach((features) => {
-      dataManager.extractFeatures(features)
-    })
-    advanceBy(1000)
-
-    dataManager.selectedClassChange(CONSTANTS.CHLOE)
-    featuresArray.forEach((features) => {
-      dataManager.extractFeatures(features)
-    })
-    advanceBy(1000)
-
-    dataManager.selectedClassChange(CONSTANTS.MUSIC)
-    featuresArray.forEach((features) => {
-      dataManager.extractFeatures(features)
-    })
-
-    expect(dataManager.dataInFrames).toStrictEqual(dataManager.getEmptyDataInFrames())
     expect(dataManager.data).toStrictEqual(expectedData)
-  })
 
-  test('reduceDataInFrames', () => {
-    const DataManager = require('../DataManager').default
-
-    const dataManager = new DataManager({ store: fakeStore })
+    // No class selected, should not add new data
+    dataManager.selectedClassChange(null)
+    dataManager.extractFeatures(features_frame_1)
+    dataManager.extractFeatures(features_frame_2)
+    dataManager.extractFeatures(features_frame_3)
+    expect(dataManager.data).toStrictEqual(expectedData)
 
     // ------------------------------------------------------------------
-    // Set up dataManager state
+    // Set up dataset 2
     // ------------------------------------------------------------------
-    dataManager.currentAudioContext = {}
-    dataManager.currentAudioContext.sampleRate = 48000
-    dataManager.calculateDataNeededPerSampleLength()
 
-    const prevData = {
-      rms: [10, 1],
-      delta_rms: [NaN, 9],
-      energy: [10, 1],
-      delta_energy: [NaN, 9],
-      spectralCentroid: [10, 1],
-      delta_spectralCentroid: [NaN, 9],
-      spectralFlatness: [10, 1],
-      delta_spectralFlatness: [NaN, 9],
-      spectralRolloff: [10, 1],
-      delta_spectralRolloff: [NaN, 9],
-      spectralSkewness: [10, 1],
-      delta_spectralSkewness: [NaN, 9],
-      perceptualSpread: [10, 1],
-      delta_perceptualSpread: [NaN, 9],
-      perceptualSharpness: [10, 1],
-      delta_perceptualSharpness: [NaN, 9],
-      mfcc: [
-        [1, 2, 3],
-        [2, 3, 4]
-      ],
-      powerSpectrum: [
-        [1, 1],
-        [1, 1]
-      ],
-      class: [2, 2],
-      timestamp: [Date.now() - 2000, Date.now() - 1000]
+    features_frame_1 = {
+      a: 2,
+      b: 2,
+      array1: [1, 1, 1],
+      array2: new Float32Array([1, 1, 1])
     }
 
-    const dataInFrames = {
-      rms: [11, 13],
-      energy: [11, 13],
-      spectralCentroid: [11, 13],
-      spectralFlatness: [11, 13],
-      spectralRolloff: [11, 13],
-      spectralSkewness: [11, 13],
-      perceptualSharpness: [11, 13],
-      perceptualSpread: [11, 13],
-      mfcc: [
+    features_frame_2 = {
+      a: 3,
+      b: 3,
+      array1: [1, 1, 1],
+      array2: new Float32Array([2, 2, 2])
+    }
+
+    features_frame_3 = {
+      a: 4,
+      b: 4,
+      array1: [1, 1, 1],
+      array2: new Float32Array([3, 3, 3])
+    }
+
+    expectedData = {
+      class: [0, 2],
+      timestamp: [Date.now() - 1000, Date.now()],
+      a: [2, 3],
+      delta_a: [NaN, 1],
+      b: [10.3333333, 3],
+      delta_b: [NaN, 7.3333333],
+      array1: [
         [2, 3, 4],
-        [4, 5, 6]
+        [1, 1, 1]
       ],
-      powerSpectrum: [
-        [1, 1],
-        [1, 1]
+      array2: [
+        [2, 2, 2],
+        [2, 2, 2]
       ]
     }
 
-    const expectedData = {
-      rms: [10, 1, 12],
-      delta_rms: [NaN, 9, 11],
-      energy: [10, 1, 12],
-      delta_energy: [NaN, 9, 11],
-      spectralCentroid: [10, 1, 12],
-      delta_spectralCentroid: [NaN, 9, 11],
-      spectralFlatness: [10, 1, 12],
-      delta_spectralFlatness: [NaN, 9, 11],
-      spectralRolloff: [10, 1, 12],
-      delta_spectralRolloff: [NaN, 9, 11],
-      spectralSkewness: [10, 1, 12],
-      delta_spectralSkewness: [NaN, 9, 11],
-      perceptualSpread: [10, 1, 12],
-      delta_perceptualSpread: [NaN, 9, 11],
-      perceptualSharpness: [10, 1, 12],
-      delta_perceptualSharpness: [NaN, 9, 11],
-      mfcc: [
-        [1, 2, 3],
-        [2, 3, 4],
-        [3, 4, 5]
-      ],
-      powerSpectrum: [
-        [1, 1],
-        [1, 1],
-        [1, 1]
-      ],
-      class: [2, 2, 0],
-      timestamp: [Date.now() - 2000, Date.now() - 1000, Date.now()]
+    // ------------------------------------------------------------------
+    // Run test
+    // ------------------------------------------------------------------
+    dataManager.selectedClassChange(CONSTANTS.MUSIC)
+    dataManager.extractFeatures(features_frame_1)
+    dataManager.extractFeatures(features_frame_2)
+    dataManager.extractFeatures(features_frame_3)
+    advanceBy(1000)
+    expect(dataManager.data).toStrictEqual(expectedData)
+
+    // ------------------------------------------------------------------
+    // Set up dataset 3
+    // ------------------------------------------------------------------
+
+    features_frame_1 = {
+      a: 2,
+      b: 2,
+      array1: [1, 1, 1],
+      array2: new Float32Array([1, 1, 1])
     }
 
-    dataManager.data = prevData
-    dataManager.dataInFrames = dataInFrames
+    features_frame_2 = {
+      a: 3,
+      b: 3,
+      array1: [1, 1, 1],
+      array2: new Float32Array([10, 10, 10])
+    }
+
+    features_frame_3 = {
+      a: 4,
+      b: 4,
+      array1: [1, 1, 1],
+      array2: new Float32Array([10, 20, 30])
+    }
+
+    expectedData = {
+      class: [0, 2, 0],
+      timestamp: [Date.now() - 2000, Date.now() - 1000, Date.now()],
+      a: [2, 3, 3],
+      delta_a: [NaN, 1, 1],
+      b: [10.3333333, 3, 3],
+      delta_b: [NaN, 7.3333333, 7.3333333],
+      array1: [
+        [2, 3, 4],
+        [1, 1, 1],
+        [1, 1, 1]
+      ],
+      array2: [
+        [2, 2, 2],
+        [2, 2, 2],
+        [7, 10.3333333, 13.6666667]
+      ]
+    }
+
+    // ------------------------------------------------------------------
+    // Run test
+    // ------------------------------------------------------------------
     dataManager.selectedClassChange(CONSTANTS.CHLOE)
-    dataManager.reduceDataInFrames()
-    expect(expectedData).toStrictEqual(dataManager.data)
+    dataManager.extractFeatures(features_frame_1)
+    dataManager.extractFeatures(features_frame_2)
+    dataManager.extractFeatures(features_frame_3)
+    advanceBy(1000)
+    expect(dataManager.data).toStrictEqual(expectedData)
+    expect(dataManager.dataInFrames).toStrictEqual(dataManager.getEmptyDataInFrames())
   })
 })

@@ -29,6 +29,19 @@ const CONSTANTS = {
     CHLOE: 0,
     BEEP: 1,
     MUSIC: 2
+  },
+  AUDIO_FEATURES: {
+    SINGLE_VALUE: [
+      'rms',
+      'energy',
+      'spectralCentroid',
+      'spectralFlatness',
+      'spectralRolloff',
+      'spectralSkewness',
+      'perceptualSpread',
+      'perceptualSharpness'
+    ],
+    ARRAY: ['mfcc', 'powerSpectrum']
   }
 }
 

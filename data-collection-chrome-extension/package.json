@@ -4,7 +4,7 @@
   "description": "Chrome extension for data collection",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "bash test.sh",
     "dev": "webpack-dev-server --mode=development",
     "build": "webpack --mode=production"
   },

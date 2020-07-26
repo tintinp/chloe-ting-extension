@@ -5,25 +5,12 @@ import CONSTANTS from '../constants/CONSTANTS'
 import Meyda from 'meyda'
 import exportCSV from '../Utils/exportCSV'
 import isNumber from '../Utils/isNumber'
+import { reduce } from 'lodash'
 
 // Audio context of the browser
 const AudioContext = window.AudioContext || window.webkitAudioContext
 
-// Features to calculate additional delta between current and previous values
-const FEATURES_SINGLE_VALUE = [
-  'rms',
-  'energy',
-  'spectralCentroid',
-  'spectralFlatness',
-  'spectralRolloff',
-  'spectralSkewness',
-  'perceptualSpread',
-  'perceptualSharpness'
-]
-
-const FEATURES_ARRAY = ['mfcc', 'powerSpectrum']
-
-const ALL_FEATURES = FEATURES_SINGLE_VALUE.concat(FEATURES_ARRAY)
+const ALL_FEATURES = CONSTANTS.AUDIO_FEATURES.SINGLE_VALUE.concat(CONSTANTS.AUDIO_FEATURES.ARRAY)
 
 class DataManager {
   constructor(options) {
@@ -91,8 +78,8 @@ class DataManager {
     this.sampleLength = sampleLength
   }
 
-  export() {
-    exportCSV(this.data, this.classChangeTimestamp)
+  async export() {
+    await exportCSV(this.data, this.classChangeTimestamp)
     this.reset()
     console.log('Exported data CSV')
   }
@@ -115,7 +102,6 @@ class DataManager {
   }
 
   extractFeatures(features) {
-    // Discard when any of the features have invalid value or class not selected
     if (this.isValidValue(features) && this.selectedClass) {
       ALL_FEATURES.forEach((featureName) => {
         const value = features[featureName]
@@ -136,10 +122,17 @@ class DataManager {
 
   // Store mean of values in current frame along with delta between each sample in the frame
   reduceDataInFrames() {
-    FEATURES_SINGLE_VALUE.forEach((featureName) => {
-      const dataInFrames = this.dataInFrames[featureName]
-      const data = this.data[featureName]
-      const delta = this.data['delta_' + featureName]
+    this.reduceSingleValueData()
+    this.reduceArrayData()
+    this.data.class.push(CONSTANTS.CLASS_TO_NUMBER[this.selectedClass])
+    this.data.timestamp.push(Date.now())
+  }
+
+  reduceSingleValueData() {
+    CONSTANTS.AUDIO_FEATURES.SINGLE_VALUE.forEach((feature) => {
+      const dataInFrames = this.dataInFrames[feature]
+      const data = this.data[feature]
+      const delta = this.data['delta_' + feature]
       const arrLength = data.length
 
       if (dataInFrames.length > 0) {
@@ -148,32 +141,42 @@ class DataManager {
         const d2 = arrLength < 2 ? null : abs(avg - data[arrLength - 2])
 
         if (d1 !== null) {
-          delta.push(Math.max(d1, d2))
+          delta.push(round(Math.max(d1, d2), 7))
         } else {
           delta.push(NaN)
         }
-        data.push(avg)
+        data.push(round(avg, 7))
       } else {
         data.push(NaN)
         delta.push(NaN)
       }
     })
+  }
 
-    // Store mean MFCC in the current frame, mean along axis 0
-    this.data.mfcc.push(mean(this.dataInFrames.mfcc, 0))
-
-    // Store mean power spectrum in the current frame, mean along axis 0
-    this.data.powerSpectrum.push(
-      mean(
+  // Store mean of value in the arrays in the current frame, mean along axis 0
+  reduceArrayData() {
+    CONSTANTS.AUDIO_FEATURES.ARRAY.forEach((feature) => {
+      const dataInFrames = this.dataInFrames[feature]
+      const data = this.data[feature]
+      if (this.isArray(dataInFrames)) {
+        data.push(round(mean(dataInFrames, 0), 7))
+      } else {
         // Convert Float32Array into normal array
-        this.dataInFrames.powerSpectrum.map((arr) => Array.from(arr)),
-        0
-      )
-    )
+        const normalArray = dataInFrames.map((arr) => Array.from(arr))
+        const meanArray = mean(normalArray, 0)
+        data.push(round(meanArray, 7))
+      }
+    })
+  }
 
-    // Store class and timestamp
-    this.data.class.push(CONSTANTS.CLASS_TO_NUMBER[this.selectedClass])
-    this.data.timestamp.push(Date.now())
+  isArray(arrayOfarrays) {
+    return reduce(
+      arrayOfarrays,
+      (bool, arr) => {
+        return bool && Array.isArray(arr)
+      },
+      true
+    )
   }
 
   calculateDataNeededPerSampleLength() {
@@ -209,8 +212,9 @@ class DataManager {
     this.targetNFrame = floor(this.sampleLength / frameLength)
     console.log(`Sampling rate: ${sampleRate} Hz`)
     console.log(`Frame duration: ${frameLength} ms`)
+    console.log(`Dataset duration: ${this.sampleLength} ms`)
     console.log(`Buffer size needed: ${bufferSizePowOf2}`)
-    console.log(`Number of FFT per dataset: ${this.targetNFrame}`)
+    console.log(`Number of frames per dataset: ${this.targetNFrame}`)
   }
 
   checkActiveSignal(rms) {
@@ -249,47 +253,30 @@ class DataManager {
   }
 
   getEmptyData() {
-    return {
-      rms: [],
-      delta_rms: [],
-      energy: [],
-      delta_energy: [],
-      spectralCentroid: [],
-      delta_spectralCentroid: [],
-      spectralFlatness: [],
-      delta_spectralFlatness: [],
-      spectralRolloff: [],
-      delta_spectralRolloff: [],
-      spectralSkewness: [],
-      delta_spectralSkewness: [],
-      perceptualSpread: [],
-      delta_perceptualSpread: [],
-      perceptualSharpness: [],
-      delta_perceptualSharpness: [],
-      mfcc: [],
-      powerSpectrum: [],
+    const data = {
       class: [],
       timestamp: []
     }
+    CONSTANTS.AUDIO_FEATURES.SINGLE_VALUE.forEach((key) => {
+      data[key] = []
+      data['delta_' + key] = []
+    })
+    CONSTANTS.AUDIO_FEATURES.ARRAY.forEach((key) => {
+      data[key] = []
+    })
+    return data
   }
 
   getEmptyDataInFrames() {
-    return {
-      rms: [],
-      energy: [],
-      spectralCentroid: [],
-      spectralFlatness: [],
-      spectralRolloff: [],
-      spectralSkewness: [],
-      perceptualSpread: [],
-      perceptualSharpness: [],
-      mfcc: [],
-      powerSpectrum: []
-    }
+    const data = {}
+    ALL_FEATURES.forEach((key) => {
+      data[key] = []
+    })
+    return data
   }
 
   isValidValue(features) {
-    return FEATURES_SINGLE_VALUE.reduce((isValid, featureName) => {
+    return CONSTANTS.AUDIO_FEATURES.SINGLE_VALUE.reduce((isValid, featureName) => {
       return isValid && isNumber(features[featureName])
     }, true)
   }
