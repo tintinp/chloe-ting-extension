@@ -24,9 +24,7 @@ const generateCSVString = (data, classChangeTimestamp) => {
             if (!isNumber(value)) {
               valid = false
             }
-            if (key !== 'timestamp') {
-              line.push(value)
-            }
+            line.push(value)
           }
         })
 
@@ -78,9 +76,7 @@ const getHeader = (data) => {
       }
       resultArray.push(arrayHeader)
     } else {
-      if (key !== 'timestamp') {
-        resultArray.push(key)
-      }
+      resultArray.push(key)
     }
   })
   return resultArray.join(',')
