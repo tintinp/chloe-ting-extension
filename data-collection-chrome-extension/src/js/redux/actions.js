@@ -10,6 +10,7 @@ export const REMOVE_TAB_BY_ID = 'REMOVE_TAB_BY_ID'
 export const TOGGLE_START_STOP = 'TOGGLE_START_STOP'
 export const SET_SAMPLE_LENGTH = 'SET_SAMPLE_LENGTH'
 export const SET_ACTIVE_SIGNAL = 'SET_ACTIVE_SIGNAL'
+export const SET_EXPORT_STATUS = 'SET_EXPORT_STATUS'
 
 export const setSelectedClass = (selectedClass) => {
   return {
@@ -100,5 +101,12 @@ export const setActiveSignal = (bool) => {
   return {
     type: SET_ACTIVE_SIGNAL,
     payload: { activeSignal: bool }
+  }
+}
+
+export const setExportStatus = (bool) => {
+  return {
+    type: SET_EXPORT_STATUS,
+    payload: { exportingCSV: bool }
   }
 }

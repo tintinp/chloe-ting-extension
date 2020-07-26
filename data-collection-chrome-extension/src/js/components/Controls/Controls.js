@@ -62,6 +62,7 @@ const Controls = ({
             handleToggle={handleToggle}
             sampleLength={dashboardStates.sampleLength}
             selectedTabId={dashboardStates.selectedTabId}
+            exportingCSV={dashboardStates.exportingCSV}
             port={port}
           />
         </Grid>

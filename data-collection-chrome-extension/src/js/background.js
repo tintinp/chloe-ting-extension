@@ -1,4 +1,4 @@
-import { addLog, addTabs, removeTabById } from './redux/actions'
+import { addLog, addTabs, removeTabById, setExportStatus } from './redux/actions'
 
 import AudioContextManager from './Managers/AudioContextManager'
 import CONSTANTS from './constants/CONSTANTS'
@@ -54,6 +54,12 @@ const attachCrossLayerListeners = () => {
 
   eventManager.on(CONSTANTS.EVENTS.SAMPLE_LENGTH_CHANGE, ({ sampleLength }) => {
     dataManager.sampleLengthChange(sampleLength)
+  })
+
+  eventManager.on(CONSTANTS.EVENTS.EXPORT, async () => {
+    store.dispatch(setExportStatus(true))
+    await dataManager.export()
+    store.dispatch(setExportStatus(false))
   })
 }
 

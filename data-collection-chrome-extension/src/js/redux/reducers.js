@@ -6,6 +6,7 @@ import {
   SELECTED_CLASS_CHANGE,
   SELECTED_TAB_CHANGE,
   SET_ACTIVE_SIGNAL,
+  SET_EXPORT_STATUS,
   SET_SAMPLE_LENGTH,
   TOGGLE_START_STOP,
   UPDATE_COUNT
@@ -28,6 +29,7 @@ const defaultDashboardState = {
   sampleLength: CONSTANTS.DEFAULT_SAMPLE_LENGTH,
   collectingData: false,
   activeSignal: false,
+  exportingCSV: false,
   tabs: {}
 }
 
@@ -99,6 +101,11 @@ const dashboardStates = (state = defaultDashboardState, action) => {
         sampleLength: length
       }
     case SET_ACTIVE_SIGNAL:
+      return {
+        ...state,
+        ...action.payload
+      }
+    case SET_EXPORT_STATUS:
       return {
         ...state,
         ...action.payload

@@ -3,7 +3,8 @@ import { addLog, setActiveSignal, updateCount } from '../redux/actions'
 
 import CONSTANTS from '../constants/CONSTANTS'
 import Meyda from 'meyda'
-import exportCSV from '../Utils/exportCSV'
+import dateFormat from 'dateformat'
+import generateCSVString from '../Utils/generateCSVString'
 import isNumber from '../Utils/isNumber'
 import { reduce } from 'lodash'
 
@@ -30,6 +31,7 @@ class DataManager {
     this.classChangeTimestamp = []
     this.data = this.getEmptyData()
     this.dataInFrames = this.getEmptyDataInFrames()
+    this.hasExported = false
   }
 
   // --------------------------------------------------------------------------
@@ -37,6 +39,11 @@ class DataManager {
   // --------------------------------------------------------------------------
 
   startCollectingData(stream) {
+    if (this.hasExported) {
+      this.hasExported = false
+      this.clearDatasetCount()
+    }
+
     // A hack to start playing audio stream without connecting to speaker is to create HTML Audio element
     // and connect the stream to the element srcObject
     this.audioElement = new Audio()
@@ -79,9 +86,27 @@ class DataManager {
   }
 
   async export() {
-    await exportCSV(this.data, this.classChangeTimestamp)
-    this.reset()
-    console.log('Exported data CSV')
+    return new Promise((resolve) => {
+      window.URL = window.webkitURL || window.URL
+      const contentType = 'text/csv'
+
+      // Format data into csv string
+      const csv = generateCSVString(this.data, this.classChangeTimestamp)
+
+      // Create CSV file to download
+      const filename = `${dateFormat(new Date(), 'UTC:yyyy-mm-dd_HH-MM-ss')}.csv`
+      const csvBlob = new Blob([csv], { type: contentType })
+      const url = window.URL.createObjectURL(csvBlob)
+
+      // Start download
+      chrome.downloads.download({ url: url, filename: filename }, (downloadItem) => {
+        this.store.dispatch(addLog(`Exported ${filename}`))
+        this.hasExported = true
+        console.log(`Exported ${filename}`)
+        this.reset()
+        resolve(downloadItem)
+      })
+    })
   }
 
   // --------------------------------------------------------------------------
