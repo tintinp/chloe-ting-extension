@@ -53,7 +53,7 @@ We can export features of datasets collected into a CSV file. More detail on usa
 
 Using Librosa python library, we can extract and plot audio characteristic. The purpose of this is not to classify any gender. The plot below is an observation from samples provided by [OpenSLR](http://www.openslr.org/12/). It can be seen that Chloe's vocal shared similar frequency intensity as the speech sample from OpenSLR.
 
-**Sample from OpenSLR**
+**Comparing vocal frequencies between two vocals**
 ![Spectrogram comparing OpenSLR and Chloe's vocal](/assets/readme/images/spectrogram_compare.png)
 [Listen to OpenSLR Sample](https://www.dropbox.com/s/fuzxq7gpnf820cv/84-121123-0001.flac?dl=0)
 [Listen to Chloe Sample](https://www.dropbox.com/s/zfekwto0x7o19hv/052020-0-11.wav?dl=0)
