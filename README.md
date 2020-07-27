@@ -55,7 +55,7 @@ Using Librosa python library, we can extract and plot audio characteristic. The 
 
 **Comparing vocal frequencies between two vocals**
 ![Spectrogram comparing OpenSLR and Chloe's vocal](/assets/readme/images/spectrogram_compare.png)
-[Listen to OpenSLR Sample](https://www.dropbox.com/s/fuzxq7gpnf820cv/84-121123-0001.flac?dl=0)
+[Listen to OpenSLR Sample](https://www.dropbox.com/s/fuzxq7gpnf820cv/84-121123-0001.flac?dl=0) </br>
 [Listen to Chloe Sample](https://www.dropbox.com/s/zfekwto0x7o19hv/052020-0-11.wav?dl=0)
 
 By extracting these frequency signatures, we should be able to distinguish the difference between Chloe's vocal and music.
