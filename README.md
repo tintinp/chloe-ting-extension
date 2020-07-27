@@ -4,30 +4,32 @@ Replace music inside Chloe Ting's workout video with music on another Chrome tab
 
 ## Overview
 
-### Audio feature extraction
+#### Audio feature extraction
 
 - [x] Explore audio characteristics
 - [x] Determine DSP technique and features to extract for traning ML model
 
-### Data collection
+#### Data collection
 
 - [x] Build Chrome extension for data collection
 - [x] Extract features into csv file
 
-### Machine Learning
+#### Machine Learning
 
 - [x] Experiment with parameters for each neural network layer
 - [ ] Improve training dataset or feature selections (go back to data collection step)
 
-### Music replacer
+#### Music replacer
 
 - [ ] Build Chrome extension to handle multiple audio sources
 - [ ] Apply trained model to the extension
 
-### Organizing README
+#### Organizing README
 
 - [ ] Move long technical descriptions into appropriate page
 - [ ] Modify front-page README to just talk about using the extension and basic ideas of DSP and ML used
+
+</br>
 
 ## Data collection with Chrome extension
 
@@ -44,6 +46,8 @@ The default sample length is 700ms. Meaning, audio features are calculated from 
 - Music is background music during the workout
 
 We can export features of datasets collected into a CSV file. More detail on usage, implementation, and further development can be found on `README.md` of `data-collection-chrome-extension`.
+
+</br>
 
 ## Feature Extraction
 
@@ -85,6 +89,8 @@ This first MFFC coefficient reflected lower frequency in the Mel scale. When Chl
 [Meyda](https://meyda.js.org/audio-features) defines this as _how noisy a sound is. For example a pure sine wave will have a flatness that approaches 0.0, and white noise will have a flatness that approaches 1.0_. When Chloe is speaking, there seems to be high fluctuation in this value.
 ![Spectral Flatness](/assets/readme/images/spectral_flatness.png)
 
+</br>
+
 ## Machine Learning
 
 Using TensorFlow to implement a neural network model with three layers. Total number of features is 21 (maybe 22 if include index of bin of max power spectrum) and total number of class is 3. The model training session is implemented with Python. Model can later be export and use to predict with TensorFlow JS.
@@ -101,9 +107,13 @@ Using TensorFlow to implement a neural network model with three layers. Total nu
 
 [TBD]
 
+</br>
+
 ## Chrome extension with trained ML model
 
 [TBD]
+
+</br>
 
 ## References
 
