@@ -63,7 +63,7 @@ By extracting these frequency signatures, we should be able to distinguish the d
 
 The goal is to extract audio features from Youtube and predict using trained model inside Chrome extension, hence using JavaScript library, Meyda. Therefore, to minimize unknown factors for the purpose of this prototype, feature extraction for training the model should also be extracted in the same manner. You can learn more about [Meyda here](https://meyda.js.org/). <br/>
 
-Many researches and projects use the property of [MFCC](http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/). [This project](http://www.primaryobjects.com/2016/06/22/identifying-the-gender-of-a-voice-using-machine-learning/) highlights many features that can be used. Hence, I decided to explore as many features as I can get from using Meyda. From visualizing tons of plots, [Data Exploration](machine-learning/data_exploration.ipynb), I've chosen these features as they show promising value for training the neural network. A comprehensive analysis can be found at [Data Analysis](machine-learning/data_analysis.ipynb).
+Many researches and projects use the property of [MFCC](http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/). [This project](http://www.primaryobjects.com/2016/06/22/identifying-the-gender-of-a-voice-using-machine-learning/) highlights many features that can be used. Hence, I decided to explore as many features as I can get from using Meyda. From visualizing tons of plots, [Data Exploration](machine-learning/data_exploration.ipynb), I've chosen these features as they show promising value for training the neural network. **A comprehensive analysis can be found at [Data Analysis](machine-learning/data_analysis.ipynb).**
 
 1. **Spectral Flatness** - "Noisiness" of the sound
 2. **MFCC** - 1st and 10th coefficient
@@ -71,18 +71,18 @@ Many researches and projects use the property of [MFCC](http://practicalcryptogr
 
 This should give 18 different features for a sample. 700ms per sample.
 
-### Example of some of the features
+### Examples of feature visualization
 
 Shaded area indicated when Chloe is speaking. As she speaks, background music volume ducted. As a result, bass and subs at around 50Hz amplitude dropped down to almost 0.
 ![~50 Hz](/assets/readme/images/ps1.png)
 
-This shows peaks when the timer is beeping at 1000Hz.
+Timer's beep has two pitches, one at 1000Hz and the other at 2000Hz. The plot below shows peaks in the 1000Hz bin.
 ![~1000 Hz](/assets/readme/images/ps23.png)
 
 This first MFFC coefficient reflected lower frequency in the Mel scale. When Chloe is speaking, the coefficient ducted.
 ![First Mel's Coefficient](/assets/readme/images/mfcc1.png)
 
-[Meyda](https://meyda.js.org/audio-features) defines this as _Determining how noisy a sound is. For example a pure sine wave will have a flatness that approaches 0.0, and white noise will have a flatness that approaches 1.0_. When Chloe is speaking, there seems to be high fluctuation in this value. Vocal might have a more complex wave signature.
+[Meyda](https://meyda.js.org/audio-features) defines this as _how noisy a sound is. For example a pure sine wave will have a flatness that approaches 0.0, and white noise will have a flatness that approaches 1.0_. When Chloe is speaking, there seems to be high fluctuation in this value.
 ![Spectral Flatness](/assets/readme/images/spectral_flatness.png)
 
 ## Machine Learning
