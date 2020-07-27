@@ -4,30 +4,32 @@ Replace music inside Chloe Ting's workout video with music on another Chrome tab
 
 ## Overview
 
-### Audio feature extraction
+#### Audio feature extraction
 
 - [x] Explore audio characteristics
 - [x] Determine DSP technique and features to extract for traning ML model
 
-### Data collection
+#### Data collection
 
 - [x] Build Chrome extension for data collection
-- [ ] Extract features into csv file
+- [x] Extract features into csv file
 
-### Machine Learning
+#### Machine Learning
 
 - [x] Experiment with parameters for each neural network layer
 - [ ] Improve training dataset or feature selections (go back to data collection step)
 
-### Music replacer
+#### Music replacer
 
 - [ ] Build Chrome extension to handle multiple audio sources
 - [ ] Apply trained model to the extension
 
-### Organizing README
+#### Organizing README
 
 - [ ] Move long technical descriptions into appropriate page
 - [ ] Modify front-page README to just talk about using the extension and basic ideas of DSP and ML used
+
+</br>
 
 ## Data collection with Chrome extension
 
@@ -45,38 +47,46 @@ The default sample length is 700ms. Meaning, audio features are calculated from 
 
 We can export features of datasets collected into a CSV file. More detail on usage, implementation, and further development can be found on `README.md` of `data-collection-chrome-extension`.
 
+</br>
+
 ## Feature Extraction
 
 Using Librosa python library, we can extract and plot audio characteristic. The purpose of this is not to classify any gender. The plot below is an observation from samples provided by [OpenSLR](http://www.openslr.org/12/). It can be seen that Chloe's vocal shared similar frequency intensity as the speech sample from OpenSLR.
 
-**Sample from OpenSLr**
-![OpenSLR vocal spectrogram](/assets/readme/images/OpenSLR_sample.png)
-[Listen to sample](https://www.dropbox.com/s/fuzxq7gpnf820cv/84-121123-0001.flac?dl=0)
+**Comparing vocal frequencies between two vocals**
+![Spectrogram comparing OpenSLR and Chloe's vocal](/assets/readme/images/spectrogram_compare.png)
+[Listen to OpenSLR Sample](https://www.dropbox.com/s/fuzxq7gpnf820cv/84-121123-0001.flac?dl=0) </br>
+[Listen to Chloe Sample](https://www.dropbox.com/s/zfekwto0x7o19hv/052020-0-11.wav?dl=0)
 
-**Chloe Ting's voice**
-![Chloe Ting's Sample](/assets/readme/images/logspectrogram_chloe_1.png)
-[Listen to sample](https://www.dropbox.com/s/zfekwto0x7o19hv/052020-0-11.wav?dl=0)
-
-_[TBD] More details on extracting and plotting with Librosa and matplotlib.pyplot (add link here)_
+By extracting these frequency signatures, we should be able to distinguish the difference between Chloe's vocal and music.
 
 ### Extraction
 
 The goal is to extract audio features from Youtube and predict using trained model inside Chrome extension, hence using JavaScript library, Meyda. Therefore, to minimize unknown factors for the purpose of this prototype, feature extraction for training the model should also be extracted in the same manner. You can learn more about [Meyda here](https://meyda.js.org/). <br/>
 
-From multiple research papers and projects (see reference section) along with visualizing data from various audio characteristic (add link to those plot later), I've decided to go with these audio features:
+Many researches and projects use the property of [MFCC](http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/). [This project](http://www.primaryobjects.com/2016/06/22/identifying-the-gender-of-a-voice-using-machine-learning/) highlights many features that can be used. Hence, I decided to explore as many features as I can get from using Meyda. From visualizing tons of plots, [Data Exploration](machine-learning/data_exploration.ipynb), I've chosen these features as they show promising value for training the neural network. **A comprehensive analysis can be found at [Data Analysis](machine-learning/data_analysis.ipynb).**
 
-1. **Delta RMS** - Rate of change of the root mean square of the waveform (time-domain)
-2. **Delta Energy** - Rate of change of infinite integral of squared signal
-3. **Power Spectrum** - FFT squared (257 bins from 512 buffer size, see reference for mathematical explaination)
-4. **Delta Spectral Centroid** - Rate of change of center of gravity of frequency spectrum
-5. **Delta Spectral Flatness** - Rate of change of "noisiness" of the sound
-6. **Spectral Rolloff** - Frequency (Hz) below which contained 99% of the energy of the spectrum
-7. **Spectral Skewness** - How much the spectrum is varying from its mean spectral
-8. **Perceptual Spread** - Spread of spectral on bark scale
-9. **Perceptual Sharpness** - Sharpness on Bark loudness coefficients
-10. **MFCC** - First 13 Mel Frequency Cepstral Coefficients (add link for more detail on this)
+1. **Spectral Flatness** - "Noisiness" of the sound
+2. **MFCC** - 1st and 10th coefficient
+3. **Power spectrum** Frequency amplitude (squared) from 15 different frequency bins
 
-These the mixture of functions from Meyda and also manipulations those extracted value to create new feature such as the **Rate of change of RMS**. More details about those function can be found [Meyda Audio Features page](https://meyda.js.org/audio-features) and details on how I manipulate those features can be found [in the README section of Data Collection](add link here later).
+This should give 18 different features for a sample. 700ms per sample.
+
+### Examples of feature visualization
+
+Shaded area indicated when Chloe is speaking. As she speaks, background music volume ducted. As a result, bass and subs at around 50Hz amplitude dropped down to almost 0.
+![~50 Hz](/assets/readme/images/ps1.png)
+
+Timer's beep has two pitches, one at 1000Hz and the other at 2000Hz. The plot below shows peaks in the 1000Hz bin.
+![~1000 Hz](/assets/readme/images/ps23.png)
+
+This first MFFC coefficient reflected lower frequency in the Mel scale. When Chloe is speaking, the coefficient ducted.
+![First Mel's Coefficient](/assets/readme/images/mfcc1.png)
+
+[Meyda](https://meyda.js.org/audio-features) defines this as _how noisy a sound is. For example a pure sine wave will have a flatness that approaches 0.0, and white noise will have a flatness that approaches 1.0_. When Chloe is speaking, there seems to be high fluctuation in this value.
+![Spectral Flatness](/assets/readme/images/spectral_flatness.png)
+
+</br>
 
 ## Machine Learning
 
@@ -94,9 +104,13 @@ Using TensorFlow to implement a neural network model with three layers. Total nu
 
 [TBD]
 
+</br>
+
 ## Chrome extension with trained ML model
 
 [TBD]
+
+</br>
 
 ## References
 
@@ -106,14 +120,9 @@ https://adventuresinmachinelearning.com/python-tensorflow-tutorial/
 
 ### Audio feature extraction
 
-#### Feature extraction
-
 https://www.kdnuggets.com/2016/09/urban-sound-classification-neural-networks-tensorflow.html
 https://github.com/jurgenarias/Portfolio/blob/master/Voice%20Classification/Code/Gender_Classifier/Gender_Classifier_NN.ipynb
 http://www.primaryobjects.com/2016/06/22/identifying-the-gender-of-a-voice-using-machine-learning/
-
-#### MFCC
-
 https://www.youtube.com/watch?v=Z7YM-HAz-IY
 http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/
 
