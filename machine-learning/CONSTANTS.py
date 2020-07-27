@@ -4,13 +4,13 @@ CLASS_NAMES = {
     'MUSIC': 'MUSIC'
 }
 
-INT_TO_CLASS = {
-    'CHLOE': '0',
-    'BEEP': '1',
-    'MUSIC': '2'
+CLASS_TO_INT = {
+    'CHLOE': 0,
+    'BEEP': 1,
+    'MUSIC': 2
 }
 
-CLASS_TO_INT = {
+INT_TO_CLASS = {
     0: 'CHLOE',
     1: 'BEEP',
     2: 'MUSIC'
