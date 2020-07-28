@@ -26,6 +26,7 @@ class DataManager {
     this.targetNFrame = null
     this.count = {
       chloe: 0,
+      beep: 0,
       music: 0
     }
     this.classChangeTimestamp = []
@@ -259,6 +260,10 @@ class DataManager {
         this.count.chloe += 1
         this.store.dispatch(updateCount(CONSTANTS.CHLOE, this.count.chloe))
         break
+      case CONSTANTS.BEEP:
+        this.count.beep += 1
+        this.store.dispatch(updateCount(CONSTANTS.BEEP, this.count.beep))
+        break
       case CONSTANTS.MUSIC:
         this.count.music += 1
         this.store.dispatch(updateCount(CONSTANTS.MUSIC, this.count.music))
@@ -271,9 +276,11 @@ class DataManager {
   clearDatasetCount() {
     this.count = {
       chloe: 0,
+      beep: 0,
       music: 0
     }
     this.store.dispatch(updateCount(CONSTANTS.CHLOE, this.count.chloe))
+    this.store.dispatch(updateCount(CONSTANTS.BEEP, this.count.beep))
     this.store.dispatch(updateCount(CONSTANTS.MUSIC, this.count.music))
   }
 
@@ -310,6 +317,7 @@ class DataManager {
     this.data = this.getEmptyData()
     this.dataInFrames = this.getEmptyDataInFrames()
     this.count.chloe = 0
+    this.count.beep = 0
     this.count.music = 0
     this.nFrame = 0
     this.classChangeTimestamp = []
