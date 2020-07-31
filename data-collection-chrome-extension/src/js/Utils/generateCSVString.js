@@ -2,6 +2,12 @@ import CONSTANTS from '../constants/CONSTANTS'
 import isNumber from './isNumber'
 import { keys } from 'lodash'
 
+const BIN_22 = 21
+const BIN_23 = 22
+const BIN_43 = 42
+const BIN_44 = 43
+const MIN_BEEP_AMPLITUDE = 100
+
 const generateCSVString = (data, classChangeTimestamp) => {
   // Remove data that might be due to delay in human speed switching class in the UI or if any value is NaN
   const size = checkSizeConsistency(data)
@@ -28,6 +34,11 @@ const generateCSVString = (data, classChangeTimestamp) => {
           }
         })
 
+        // Filter out audio data recorded between beeps
+        if (data['powerSpectrum'] && data['class'][i] === CONSTANTS.CLASS_TO_NUMBER['BEEP']) {
+          valid = valid && checkValidBeep(data['powerSpectrum'][i])
+        }
+
         if (valid) {
           resultArray.push(line)
         }
@@ -35,6 +46,23 @@ const generateCSVString = (data, classChangeTimestamp) => {
     }
   }
   return resultArray.join('\r\n')
+}
+
+// A hack to filter out data between the beeps
+// Before beep is so fast, when collecting data, we are marking silence between beeps as beep
+// which will pollute the training dataset
+// When using sample length of 700ms, 1024 n_fft size 48000 sampling rate,
+// bin 22 and 23 correspond to ~1000 Hz (which is the frequency of beep sound)
+// bin 43 and 44 correspond to ~2000 Hz
+const checkValidBeep = (powerSpectrum) => {
+  const beep_1000 =
+    powerSpectrum[BIN_22] > MIN_BEEP_AMPLITUDE && powerSpectrum[BIN_23] > MIN_BEEP_AMPLITUDE
+  const beep_2000 =
+    powerSpectrum[BIN_43] > MIN_BEEP_AMPLITUDE && powerSpectrum[BIN_44] > MIN_BEEP_AMPLITUDE
+  if (beep_1000 || beep_2000) {
+    return true
+  }
+  return false
 }
 
 const validTimestamp = (time, timestampArray) => {
