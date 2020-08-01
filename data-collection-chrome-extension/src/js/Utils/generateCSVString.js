@@ -8,20 +8,18 @@ const BIN_22 = 21
 const BIN_23 = 22
 const BIN_43 = 42
 const BIN_44 = 43
-const MIN_BEEP_AMPLITUDE = 100
 
 const generateCSVString = (data, classChangeTimestamp) => {
   // Remove data that might be due to delay in human speed switching class in the UI or if any value is NaN
   const size = checkSizeConsistency(data)
   let resultArray = [getHeader(data)]
   const minAmplitudes = getMinAmpPowerSpectrum(data)
-  console.log(minAmplitudes)
   if (size > 0) {
     // Go through each dataset
     for (let i = 0; i < size; i++) {
       let line = []
 
-      if (validTimestamp(data.timestamp[i], classChangeTimestamp)) {
+      if (validTimestamp(data.timestamp[i], classChangeTimestamp, data.class[i])) {
         let valid = true
 
         // Go though each feature
@@ -39,9 +37,9 @@ const generateCSVString = (data, classChangeTimestamp) => {
         })
 
         // Filter out audio data recorded between beeps
-        // if (data['powerSpectrum'] && data['class'][i] === CONSTANTS.CLASS_TO_NUMBER['BEEP']) {
-        //   valid = valid && checkValidBeep(data['powerSpectrum'][i])
-        // }
+        if (data['powerSpectrum'] && data['class'][i] === CONSTANTS.CLASS_TO_NUMBER.BEEP) {
+          valid = valid && checkValidBeep(data['powerSpectrum'][i], minAmplitudes)
+        }
 
         if (valid) {
           resultArray.push(line)
@@ -57,23 +55,31 @@ const generateCSVString = (data, classChangeTimestamp) => {
 // which will pollute the training dataset
 // When using sample length of 700ms, 1024 n_fft size 48000 sampling rate,
 // bin 22 and 23 correspond to ~1000 Hz (which is the frequency of beep sound)
-// bin 43 and 44 correspond to ~2000 Hz
-const checkValidBeep = (powerSpectrum) => {
+// bin 43 and 44 correspond to ~2000 Hz (higher pitch beep)
+const checkValidBeep = (powerSpectrum, minAmplitudes) => {
   const beep_1000 =
-    powerSpectrum[BIN_22] > MIN_BEEP_AMPLITUDE && powerSpectrum[BIN_23] > MIN_BEEP_AMPLITUDE
+    powerSpectrum[BIN_22] > minAmplitudes.amp22 && powerSpectrum[BIN_23] > minAmplitudes.amp23
   const beep_2000 =
-    powerSpectrum[BIN_43] > MIN_BEEP_AMPLITUDE && powerSpectrum[BIN_44] > MIN_BEEP_AMPLITUDE
+    powerSpectrum[BIN_43] > minAmplitudes.amp43 && powerSpectrum[BIN_44] > minAmplitudes.amp44
   if (beep_1000 || beep_2000) {
     return true
   }
   return false
 }
 
-const validTimestamp = (time, timestampArray) => {
+// Filter out data logged up to 1 second before changing class
+// This will filter out mislabeled data due to human latency
+// However, will not filter out if the class is beep
+// checkValidBeep will filter that out
+const validTimestamp = (time, timestampArray, selectedClass) => {
   // Use for loop so it can break early
   for (let i = 0; i < timestampArray.length; i++) {
     const timestamp = timestampArray[i]
-    if (time > timestamp - CONSTANTS.LATENCY_TIME_TO_DELETE_DATASET && time <= timestamp) {
+    if (
+      time > timestamp - CONSTANTS.LATENCY_TIME_TO_DELETE_DATASET &&
+      time <= timestamp &&
+      selectedClass !== CONSTANTS.CLASS_TO_NUMBER.BEEP
+    ) {
       return false
     }
   }
@@ -112,6 +118,7 @@ const getMinAmpPowerSpectrum = (data) => {
     }
   )
 
+  // Minimum amplitude to register as a beep should peak at value at least 1 standard deviation above the mean
   return mapValues(beepAmplitudes, (arrayOfAmps) => {
     return mean(arrayOfAmps) + sqrt(variance(arrayOfAmps))
   })
