@@ -100,6 +100,9 @@ const checkSizeConsistency = (data) => {
 }
 
 const getMinAmpPowerSpectrum = (data) => {
+  if (!data.powerSpectrum) {
+    return {}
+  }
   const { powerSpectrum } = data
   const beepAmplitudes = reduce(
     powerSpectrum,
