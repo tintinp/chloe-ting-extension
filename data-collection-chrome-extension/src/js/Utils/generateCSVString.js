@@ -1,6 +1,8 @@
+import { keys, mapValues, reduce } from 'lodash'
+import { mean, sqrt, variance } from 'mathjs'
+
 import CONSTANTS from '../constants/CONSTANTS'
 import isNumber from './isNumber'
-import { keys } from 'lodash'
 
 const BIN_22 = 21
 const BIN_23 = 22
@@ -12,6 +14,8 @@ const generateCSVString = (data, classChangeTimestamp) => {
   // Remove data that might be due to delay in human speed switching class in the UI or if any value is NaN
   const size = checkSizeConsistency(data)
   let resultArray = [getHeader(data)]
+  const minAmplitudes = getMinAmpPowerSpectrum(data)
+  console.log(minAmplitudes)
   if (size > 0) {
     // Go through each dataset
     for (let i = 0; i < size; i++) {
@@ -35,9 +39,9 @@ const generateCSVString = (data, classChangeTimestamp) => {
         })
 
         // Filter out audio data recorded between beeps
-        if (data['powerSpectrum'] && data['class'][i] === CONSTANTS.CLASS_TO_NUMBER['BEEP']) {
-          valid = valid && checkValidBeep(data['powerSpectrum'][i])
-        }
+        // if (data['powerSpectrum'] && data['class'][i] === CONSTANTS.CLASS_TO_NUMBER['BEEP']) {
+        //   valid = valid && checkValidBeep(data['powerSpectrum'][i])
+        // }
 
         if (valid) {
           resultArray.push(line)
@@ -87,6 +91,30 @@ const checkSizeConsistency = (data) => {
     }
   })
   return size
+}
+
+const getMinAmpPowerSpectrum = (data) => {
+  const { powerSpectrum } = data
+  const beepAmplitudes = reduce(
+    powerSpectrum,
+    (acc, amplitudes) => {
+      acc.amp22.push(amplitudes[BIN_22])
+      acc.amp23.push(amplitudes[BIN_23])
+      acc.amp43.push(amplitudes[BIN_43])
+      acc.amp44.push(amplitudes[BIN_44])
+      return acc
+    },
+    {
+      amp22: [],
+      amp23: [],
+      amp43: [],
+      amp44: []
+    }
+  )
+
+  return mapValues(beepAmplitudes, (arrayOfAmps) => {
+    return mean(arrayOfAmps) + sqrt(variance(arrayOfAmps))
+  })
 }
 
 const getHeader = (data) => {
