@@ -102,6 +102,8 @@ From multiple researches and trials, a good starting point for number of hidden 
 
 There are 19 inputs (features) and 3 outputs (class), total of 22. Two-third of 22 is about 14-15 hidden neurons. Therefore, I experimented with different number of neurons and decided to go with 15 neurons in the first hidden layer and 8 neurons in the second hidden layer. Activation function on both layers are [relu](https://towardsdatascience.com/activation-functions-neural-networks-1cbd9f8d91d6). The last output activation function is `softmax` so the three neurons will range of 0-1 and sum of those three will equal to 1.
 
+![Neural network diagram 08/02/20](/assets/readme/images/neural-network-diagram.png)
+
 ### Cost function
 
 #### Model Loss of first trained model 08/02/20
@@ -129,7 +131,8 @@ Currently, the model is trained with 4949 datasets with training accuracy of 95%
 [Hidden Layer Heaton Research](https://www.heatonresearch.com/2017/06/01/hidden-layers.html) <br/>
 [Building Neural Network](https://towardsdatascience.com/building-your-first-neural-network-in-tensorflow-2-tensorflow-for-hackers-part-i-e1e2f1dfe7a0) <br/>
 [Deep Learning Stanford CS230](https://cs230.stanford.edu/) <br/>
-[Feature Scaling](https://www.analyticsvidhya.com/blog/2020/04/feature-scaling-machine-learning-normalization-standardization/)
+[Feature Scaling](https://www.analyticsvidhya.com/blog/2020/04/feature-scaling-machine-learning-normalization-standardization/) <br/>
+[Activation Functions](https://towardsdatascience.com/activation-functions-neural-networks-1cbd9f8d91d6)
 
 ### Audio feature extraction
 
