@@ -2,6 +2,8 @@ import '../../style/dashboard.css'
 
 import Controls from './Controls/Controls'
 import Grid from '@material-ui/core/Grid'
+import IconButton from '@material-ui/core/IconButton'
+import LaunchIcon from '@material-ui/icons/Launch'
 import Paper from '@material-ui/core/Paper'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -28,9 +30,26 @@ const useStyles = makeStyles(() => ({
 const Dashboard = ({ port }) => {
   const classes = useStyles()
 
+  const onClickHandler = () => {
+    chrome.windows.create({
+      url: chrome.runtime.getURL('popup.html'),
+      type: 'popup',
+      focused: true,
+      height: 650,
+      width: 800
+    })
+    window.close()
+  }
+
   return (
     <div className={classes.root}>
-      <div className="header">Chloe Ting Data Collection</div>
+      <div className="row space-between center-level">
+        <div className="header">Chloe Ting Data Collection</div>
+        <IconButton>
+          <LaunchIcon onClick={onClickHandler} />
+        </IconButton>
+      </div>
+
       <Grid container spacing={1}>
         <Grid item xs={6}>
           <Paper className={classes.paper}>

@@ -24,6 +24,10 @@
   justify-content: flex-start;
 }
 
+.space-between {
+  justify-content: space-between;
+}
+
 .center-level {
   align-items: center;
 }
