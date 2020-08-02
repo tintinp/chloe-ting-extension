@@ -90,7 +90,7 @@ The diagram below shows variation in spectral flatness. [Meyda](https://meyda.js
 
 ## Machine Learning
 
-Using TensorFlow to implement a neural network model with three layers. The model is trained with Python TensorFlow2 Keras Sequential model. Code and analysis of the first training can be found in [this python notebook](machine-learnin/training.ipynb).
+Using TensorFlow to implement a neural network model with three layers. The model is trained with Python TensorFlow2 Keras Sequential model. Code and analysis of the first training can be found in [this python notebook](machine-learning/training.ipynb).
 
 ### Neural network layers
 
