@@ -116,7 +116,7 @@ Currently, the model is trained with 4949 datasets with training accuracy of 95%
 
 ## Chrome extension with trained ML model
 
-**Work in progress**
+**Work in progress!**
 
 </br>
 
