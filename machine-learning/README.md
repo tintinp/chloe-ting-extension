@@ -12,4 +12,4 @@ Find out more about the feature selections and machine learning in these Python 
 
 ### Machine Learning
 
-_~Work in progress~_
+[Set up and neural network training](training.ipynb)

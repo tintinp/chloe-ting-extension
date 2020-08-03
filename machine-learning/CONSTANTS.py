@@ -36,3 +36,8 @@ FEATURES = {
     'MFCC': 'mfcc',
     'POWER_SPECTRUM': 'powerSpectrum'
 }
+
+ML = {
+    'NUMBER_OF_FEATURES': 19,
+    'N_CLASSES': 3
+}
