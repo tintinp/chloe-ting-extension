@@ -64,13 +64,13 @@ By extracting these frequency signatures, we should be able to distinguish the d
 
 The goal is to extract audio features from Youtube and predict using trained model inside Chrome extension, hence using JavaScript library, Meyda. Therefore, to minimize unknown factors for the purpose of this prototype, feature extraction for training the model should also be extracted in the same manner. You can learn more about [Meyda here](https://meyda.js.org/). <br/>
 
-Many researches and projects use the property of [MFCC](http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/). [This project](http://www.primaryobjects.com/2016/06/22/identifying-the-gender-of-a-voice-using-machine-learning/) highlights many features that can be used. Hence, I decided to explore as many features as I can get from using Meyda. From visualizing tons of plots, [Data Exploration](machine-learning/data_exploration.ipynb), I've chosen these features as they show promising value for training the neural network. **A comprehensive analysis can be found at [Data Analysis](machine-learning/data_analysis.ipynb).**
+Many researches and projects use the property of [MFCC](http://practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/). [This project](http://www.primaryobjects.com/2016/06/22/identifying-the-gender-of-a-voice-using-machine-learning/) highlights many features that can be used. Hence, I decided to explore as many features as I can get from using Meyda. From visualizing tons of plots in [Data Exploration python notebook](machine-learning/data_exploration.ipynb), I've chosen these features as they show promising value for training the neural network. **A comprehensive analysis can be found at [this Data Analysis python notebook](machine-learning/data_analysis.ipynb).**
 
-1. **Spectral Flatness** - "Noisiness" of the sound
+1. **Spectral Flatness** - "Noisiness" of the sound and the delta of neighboring values
 2. **MFCC** - 1st and 10th coefficient
 3. **Power spectrum** Frequency amplitude (squared) from 15 different frequency bins
 
-This should give 18 different features for a sample. 700ms per sample.
+This gives 19 different features for a sample. 700ms per sample.
 
 ### Examples of feature visualization
 
@@ -152,3 +152,5 @@ Currently, the model is trained with 4949 datasets with training accuracy of 95%
 
 [WebRTC Video Broadcast](https://gabrieltanner.org/blog/webrtc-video-broadcast) <br/>
 [WebRTC Peer Connection Setup](https://github.com/webrtc/samples/blob/gh-pages/src/content/peerconnection/pc1/js/main.js)
+[WebRTC Samples](https://webrtc.github.io/samples/) <br/>
+[WebRTC Stream Video](https://webrtc.github.io/samples/src/content/capture/video-video/)
