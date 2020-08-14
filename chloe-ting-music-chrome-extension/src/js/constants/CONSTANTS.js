@@ -30,18 +30,18 @@ const CONSTANTS = {
   },
   AUDIO_FEATURES: {
     SINGLE_VALUE: [
-      'rms',
-      'energy',
-      'spectralCentroid',
-      'spectralFlatness',
-      'spectralRolloff',
-      'spectralSkewness',
-      'perceptualSpread',
-      'perceptualSharpness'
+      // 'rms',
+      // 'energy',
+      // 'spectralCentroid',
+      'spectralFlatness'
+      // 'spectralRolloff',
+      // 'spectralSkewness',
+      // 'perceptualSpread',
+      // 'perceptualSharpness'
     ],
     ARRAY: ['mfcc', 'powerSpectrum']
   },
-  LATENCY_TIME_TO_DELETE_DATASET: 1000 // ms
+  TF_TRAINED_MODEL_PATH: 'saved-models/2020-08-13/js/model.json'
 }
 
 export default CONSTANTS

@@ -1,14 +1,14 @@
-import { addLog, addTabs, removeTabById } from './redux/actions'
+import { addTabs, removeTabById } from './redux/actions'
 
-// import AudioContextManager from './Managers/AudioContextManager'
+import AudioContextManager from './Managers/AudioContextManager'
 import CONSTANTS from './constants/CONSTANTS'
-// import DataManager from './Managers/DataManager'
+import DataManager from './Managers/DataManager'
 import eventManager from './Managers/EventManager'
 import store from './redux/store'
 import { wrapStore } from 'webext-redux'
 
-// const audioContextManager = new AudioContextManager({ store })
-// const dataManager = new DataManager({ store })
+const audioContextManager = new AudioContextManager({ store })
+const dataManager = new DataManager({ store })
 
 const getAllTabsInfo = () => {
   chrome.tabs.query({}, (tabs) => {
@@ -33,21 +33,27 @@ const attachTabListeners = () => {
 }
 
 const attachCrossLayerListeners = () => {
-  eventManager.on(CONSTANTS.EVENTS.START_PREDICTING, (payload) => {
-    console.log(payload)
+  eventManager.on(CONSTANTS.EVENTS.START_PREDICTING, async ({ selectedTabId }) => {
+    try {
+      const stream = await audioContextManager.getAudioStream(selectedTabId.workout)
+      dataManager.startCollectingData(stream)
+    } catch (err) {
+      console.error('Error starting data collection:', err.message)
+    }
   })
 
   eventManager.on(CONSTANTS.EVENTS.STOP_PREDICTING, () => {
-    console.log('stop predicting')
+    audioContextManager.stopStream()
   })
 }
 
-const main = () => {
+const main = async () => {
   console.log('Running background.js')
   wrapStore(store)
   getAllTabsInfo()
   attachTabListeners()
   attachCrossLayerListeners()
+  await dataManager.start()
 }
 
 main()

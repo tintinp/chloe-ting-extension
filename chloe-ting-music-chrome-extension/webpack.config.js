@@ -17,6 +17,11 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.js$/,
+        enforce: 'pre',
+        use: ['source-map-loader']
+      },
+      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
@@ -48,9 +53,12 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [{ from: './src/manifest.json' }]
     }),
-    // new CopyWebpackPlugin({
-    //   patterns: [{ from: './src/js/IIFE/getAudioViaWebRTC.js' }]
-    // }),
+    new CopyWebpackPlugin({
+      patterns: [{ from: './src/js/IIFE/getAudioViaWebRTC.js' }]
+    }),
+    new CopyWebpackPlugin({
+      patterns: [{ from: './src/saved-models', to: 'saved-models' }]
+    }),
     new HtmlWebpackPlugin({
       template: join(__dirname, 'src', 'popup.html'),
       filename: 'popup.html',
