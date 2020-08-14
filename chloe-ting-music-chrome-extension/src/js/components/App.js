@@ -1,10 +1,12 @@
+import '../../style/app.css'
+
 import React, { Fragment } from 'react'
 
-import Analysis from './Analysis'
+import Analysis from './Analysis/Analysis'
 import BottomNavigation from '@material-ui/core/BottomNavigation'
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction'
 import GraphicEqIcon from '@material-ui/icons/GraphicEq'
-import MusicReplacer from './MusicReplacer'
+import MusicReplacer from './MusicReplacer/MusicReplacer'
 import PropTypes from 'prop-types'
 import YouTubeIcon from '@material-ui/icons/YouTube'
 import { withStyles } from '@material-ui/core/styles'
@@ -30,8 +32,8 @@ const App = ({ port, classes }) => {
 
   return (
     <Fragment>
-      {value === 'musicReplacer' && <MusicReplacer></MusicReplacer>}
-      {value === 'analysis' && <Analysis></Analysis>}
+      {value === 'musicReplacer' && <MusicReplacer port={port} />}
+      {value === 'analysis' && <Analysis port={port} />}
       <BottomNavigation
         value={value}
         onChange={(event, newValue) => {

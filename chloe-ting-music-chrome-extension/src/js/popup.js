@@ -10,9 +10,7 @@ import { render } from 'react-dom'
 const store = new Store()
 const port = chrome.runtime.connect({ name: CONSTANTS.PORTS.CROSS_LAYER })
 
-console.log('popup')
 store.ready().then(() => {
-  console.log('store ready')
   render(
     <Provider store={store}>
       <App port={port} />

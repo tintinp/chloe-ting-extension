@@ -32,14 +32,22 @@ const attachTabListeners = () => {
   })
 }
 
-const attachCrossLayerListeners = () => {}
+const attachCrossLayerListeners = () => {
+  eventManager.on(CONSTANTS.EVENTS.START_PREDICTING, (payload) => {
+    console.log(payload)
+  })
+
+  eventManager.on(CONSTANTS.EVENTS.STOP_PREDICTING, () => {
+    console.log('stop predicting')
+  })
+}
 
 const main = () => {
   console.log('Running background.js')
   wrapStore(store)
-  // getAllTabsInfo()
-  // attachTabListeners()
-  // attachCrossLayerListeners()
+  getAllTabsInfo()
+  attachTabListeners()
+  attachCrossLayerListeners()
 }
 
 main()
