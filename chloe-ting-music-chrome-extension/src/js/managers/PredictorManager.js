@@ -7,12 +7,12 @@ class PredictorManager {
 
   async loadModel(modelPath) {
     this.model = await tf.loadLayersModel(modelPath)
-    this.model.summary()
   }
 
   predict(features) {
-    const prediction = this.model.predict(features)
-    console.log(prediction)
+    console.log(features)
+    // const prediction = this.model.predict(features)
+    // console.log(prediction)
   }
 }
 

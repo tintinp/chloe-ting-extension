@@ -28,19 +28,13 @@ const CONSTANTS = {
     BEEP: 1,
     MUSIC: 2
   },
-  AUDIO_FEATURES: {
-    SINGLE_VALUE: [
-      // 'rms',
-      // 'energy',
-      // 'spectralCentroid',
-      'spectralFlatness'
-      // 'spectralRolloff',
-      // 'spectralSkewness',
-      // 'perceptualSpread',
-      // 'perceptualSharpness'
-    ],
-    ARRAY: ['mfcc', 'powerSpectrum']
+  FEATURES: {
+    SPECTRAL_FLATNESS: 'spectralFlatness',
+    MFCC: 'mfcc',
+    POWER_SPECTRUM: 'powerSpectrum'
   },
+  MFCC_BINS: [1, 10],
+  POWER_SPECTRUM_BINS: [1, 2, 3, 4, 10, 11, 22, 23, 43, 44, 45, 109, 110, 125, 126],
   TF_TRAINED_MODEL_PATH: 'saved-models/2020-08-13/js/model.json'
 }
 

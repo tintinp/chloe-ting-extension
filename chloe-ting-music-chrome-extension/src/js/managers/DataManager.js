@@ -1,18 +1,18 @@
 import { abs, floor, log, mean, pow, round } from 'mathjs'
+import { keys, reduce } from 'lodash'
 
 import CONSTANTS from '../constants/CONSTANTS'
 import Meyda from 'meyda'
 import PredictorManager from './PredictorManager'
-// import generateCSVString from '../Utils/generateCSVString'
 import isNumber from '../Utils/isNumber'
-import { reduce } from 'lodash'
 
-// import { setActiveSignal } from '../redux/actions'
+const SINGLE_VALUE_FEATURES = [CONSTANTS.FEATURES.SPECTRAL_FLATNESS]
+const ARRAY_VALUE_FEATURES = [CONSTANTS.FEATURES.MFCC, CONSTANTS.FEATURES.POWER_SPECTRUM]
+const ALL_FEATURES = SINGLE_VALUE_FEATURES.concat(ARRAY_VALUE_FEATURES)
+const MAX_DATA_CAPACITY = 100
 
 // Audio context of the browser
 const AudioContext = window.AudioContext || window.webkitAudioContext
-
-const ALL_FEATURES = CONSTANTS.AUDIO_FEATURES.SINGLE_VALUE.concat(CONSTANTS.AUDIO_FEATURES.ARRAY)
 
 class DataManager {
   constructor(options) {
@@ -27,7 +27,6 @@ class DataManager {
     this.data = this.getEmptyData()
     this.dataInFrames = this.getEmptyDataInFrames()
     this.tfModel = new PredictorManager()
-    console.log('hi')
   }
 
   // --------------------------------------------------------------------------
@@ -64,7 +63,6 @@ class DataManager {
     this.nFrame = 0
     this.targetNFrame = null
     this.running = false
-    // this.store.dispatch(setActiveSignal(false))
   }
 
   // --------------------------------------------------------------------------
@@ -85,7 +83,7 @@ class DataManager {
   }
 
   extractFeatures(features) {
-    if (this.isValidValue(features) && this.selectedClass) {
+    if (this.isValidValue(features)) {
       ALL_FEATURES.forEach((featureName) => {
         const value = features[featureName]
         this.dataInFrames[featureName].push(value)
@@ -93,9 +91,11 @@ class DataManager {
 
       if (this.nFrame === this.targetNFrame - 1) {
         this.reduceDataInFrames()
-        this.incrementDatasetCount()
+        const features = this.getLatestData()
+        if (features) {
+          this.tfModel.predict(features)
+        }
         this.dataInFrames = this.getEmptyDataInFrames()
-        this.checkActiveSignal(features.rms)
         this.nFrame = 0
       } else {
         this.nFrame += 1
@@ -106,13 +106,13 @@ class DataManager {
   // Store mean of values in current frame along with delta between each sample in the frame
   reduceDataInFrames() {
     this.reduceSingleValueData()
-    this.reduceArrayData()
-    this.data.class.push(CONSTANTS.CLASS_TO_NUMBER[this.selectedClass])
-    this.data.timestamp.push(Date.now())
+    this.reduceMFCCData()
+    this.reducePowerSpectrumData()
+    this.checkDataSize()
   }
 
   reduceSingleValueData() {
-    CONSTANTS.AUDIO_FEATURES.SINGLE_VALUE.forEach((feature) => {
+    SINGLE_VALUE_FEATURES.forEach((feature) => {
       const dataInFrames = this.dataInFrames[feature]
       const data = this.data[feature]
       const delta = this.data['delta_' + feature]
@@ -136,20 +136,59 @@ class DataManager {
     })
   }
 
+  reduceMFCCData() {
+    const dataInFrames = this.dataInFrames[CONSTANTS.FEATURES.MFCC]
+    const data = this.data[CONSTANTS.FEATURES.MFCC]
+    const meanArray = this.getMeanArray(dataInFrames)
+    const selectedBins = CONSTANTS.MFCC_BINS.map((bin) => {
+      return meanArray[bin - 1]
+    })
+    data.push(round(selectedBins, 7))
+  }
+
+  reducePowerSpectrumData() {
+    const dataInFrames = this.dataInFrames[CONSTANTS.FEATURES.POWER_SPECTRUM]
+    const data = this.data[CONSTANTS.FEATURES.POWER_SPECTRUM]
+    const meanArray = this.getMeanArray(dataInFrames)
+    const selectedBins = CONSTANTS.POWER_SPECTRUM_BINS.map((bin) => {
+      return meanArray[bin - 1]
+    })
+    data.push(round(selectedBins, 7))
+  }
+
   // Store mean of value in the arrays in the current frame, mean along axis 0
-  reduceArrayData() {
-    CONSTANTS.AUDIO_FEATURES.ARRAY.forEach((feature) => {
-      const dataInFrames = this.dataInFrames[feature]
-      const data = this.data[feature]
-      if (this.isArray(dataInFrames)) {
-        data.push(round(mean(dataInFrames, 0), 7))
-      } else {
-        // Convert Float32Array into normal array
-        const normalArray = dataInFrames.map((arr) => Array.from(arr))
-        const meanArray = mean(normalArray, 0)
-        data.push(round(meanArray, 7))
+  getMeanArray(data) {
+    if (this.isArray(data)) {
+      return mean(data, 0)
+    } else {
+      // Convert Float32Array into normal array
+      const normalArray = data.map((arr) => Array.from(arr))
+      return mean(normalArray, 0)
+    }
+  }
+
+  checkDataSize() {
+    keys(this.data).forEach((key) => {
+      if (this.data[key].length > MAX_DATA_CAPACITY) {
+        this.data[key].shift()
       }
     })
+  }
+
+  getLatestData() {
+    let sF = this.data[CONSTANTS.FEATURES.SPECTRAL_FLATNESS]
+    let deltaSF = this.data[`delta_${CONSTANTS.FEATURES.SPECTRAL_FLATNESS}`]
+    let mfcc = this.data[CONSTANTS.FEATURES.MFCC]
+    let pS = this.data[CONSTANTS.FEATURES.POWER_SPECTRUM]
+
+    if (!isNumber(deltaSF[deltaSF.length - 1])) {
+      return null
+    }
+
+    let features = []
+    features.push(sF[sF.length - 1])
+    features.push(deltaSF[deltaSF.length - 1])
+    return features.concat(mfcc[mfcc.length - 1], pS[pS.length - 1])
   }
 
   isArray(arrayOfarrays) {
@@ -200,26 +239,13 @@ class DataManager {
     console.log(`Number of frames per dataset: ${this.targetNFrame}`)
   }
 
-  // checkActiveSignal(rms) {
-  //   if (rms > 0 && !this.activeSignal) {
-  //     this.activeSignal = true
-  //     this.store.dispatch(setActiveSignal(true))
-  //   } else if (rms <= 0 && this.activeSignal) {
-  //     this.activeSignal = false
-  //     this.store.dispatch(setActiveSignal(false))
-  //   }
-  // }
-
   getEmptyData() {
-    const data = {
-      class: [],
-      timestamp: []
-    }
-    CONSTANTS.AUDIO_FEATURES.SINGLE_VALUE.forEach((key) => {
+    const data = {}
+    SINGLE_VALUE_FEATURES.forEach((key) => {
       data[key] = []
       data['delta_' + key] = []
     })
-    CONSTANTS.AUDIO_FEATURES.ARRAY.forEach((key) => {
+    ARRAY_VALUE_FEATURES.forEach((key) => {
       data[key] = []
     })
     return data
@@ -233,8 +259,9 @@ class DataManager {
     return data
   }
 
+  // Only check at the single value feature has valid data, assumes that array value features gives valid data
   isValidValue(features) {
-    return CONSTANTS.AUDIO_FEATURES.SINGLE_VALUE.reduce((isValid, featureName) => {
+    return SINGLE_VALUE_FEATURES.reduce((isValid, featureName) => {
       return isValid && isNumber(features[featureName])
     }, true)
   }

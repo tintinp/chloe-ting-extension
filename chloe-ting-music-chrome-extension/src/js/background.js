@@ -1,9 +1,9 @@
 import { addTabs, removeTabById } from './redux/actions'
 
-import AudioContextManager from './Managers/AudioContextManager'
+import AudioContextManager from './managers/AudioContextManager'
 import CONSTANTS from './constants/CONSTANTS'
-import DataManager from './Managers/DataManager'
-import eventManager from './Managers/EventManager'
+import DataManager from './managers/DataManager'
+import eventManager from './managers/EventManager'
 import store from './redux/store'
 import { wrapStore } from 'webext-redux'
 
@@ -36,7 +36,7 @@ const attachCrossLayerListeners = () => {
   eventManager.on(CONSTANTS.EVENTS.START_PREDICTING, async ({ selectedTabId }) => {
     try {
       const stream = await audioContextManager.getAudioStream(selectedTabId.workout)
-      dataManager.startCollectingData(stream)
+      dataManager.startExtraction(stream)
     } catch (err) {
       console.error('Error starting data collection:', err.message)
     }
