@@ -1,9 +1,9 @@
 const testPathIgnorePatterns = ['/node_modules/', '/build/']
 
 module.exports = {
-  collectCoverageFrom: ['src/**/*.js'],
+  collectCoverageFrom: ['src/**/*.ts'],
   coverageDirectory: './coverage/',
   setupFiles: ['jest-date-mock'],
-  testMatch: ['**/__tests__/**/*.js?(x)', '**/+(*.)+(spec|test).js?(x)'],
+  testMatch: ['**/__tests__/**/*.ts?(x)', '**/+(*.)+(spec|test).ts?(x)'],
   testPathIgnorePatterns
 }

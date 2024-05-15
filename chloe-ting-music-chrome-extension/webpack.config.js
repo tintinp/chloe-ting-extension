@@ -7,8 +7,8 @@ const WriteFilePlugin = require('write-file-webpack-plugin')
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
   entry: {
-    popup: join(__dirname, 'src', 'js', 'popup.js'),
-    background: join(__dirname, 'src', 'js', 'background.js')
+    popup: join(__dirname, 'dist', 'src', 'popup.js'),
+    background: join(__dirname, 'dist', 'src', 'background.js')
   },
   output: {
     path: join(__dirname, 'build'),
@@ -16,11 +16,6 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.js$/,
-        enforce: 'pre',
-        use: ['source-map-loader']
-      },
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
@@ -51,21 +46,18 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin({
-      patterns: [{ from: './src/manifest.json' }]
+      patterns: [{ from: './assets/manifest.json' }]
     }),
     new CopyWebpackPlugin({
-      patterns: [{ from: './src/js/IIFE/getAudioViaWebRTC.js' }]
-    }),
-    new CopyWebpackPlugin({
-      patterns: [{ from: './src/saved-models', to: 'saved-models' }]
+      patterns: [{ from: './dist/src/IIFE/getAudioViaWebRTC.js' }]
     }),
     new HtmlWebpackPlugin({
-      template: join(__dirname, 'src', 'popup.html'),
+      template: join(__dirname, 'assets', 'popup.html'),
       filename: 'popup.html',
       chunks: ['popup']
     }),
     new HtmlWebpackPlugin({
-      template: join(__dirname, 'src', 'background.html'),
+      template: join(__dirname, 'assets', 'background.html'),
       filename: 'background.html',
       chunks: ['background']
     }),

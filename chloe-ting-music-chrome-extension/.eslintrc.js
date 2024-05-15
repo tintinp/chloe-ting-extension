@@ -3,7 +3,13 @@ module.exports = {
     browser: true,
     es2020: true
   },
-  extends: ['plugin:react/recommended', 'prettier', 'plugin:prettier/recommended'],
+  extends: [
+    'plugin:react/recommended',
+    'prettier',
+    'plugin:prettier/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'eslint:recommended'
+  ],
   parserOptions: {
     ecmaFeatures: {
       jsx: true
@@ -11,7 +17,8 @@ module.exports = {
     ecmaVersion: 11,
     sourceType: 'module'
   },
-  plugins: ['react', 'prettier', 'react-hooks'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['react', 'prettier', 'react-hooks', '@typescript-eslint'],
   rules: {
     'prettier/prettier': 'error',
     'react-hooks/rules-of-hooks': 'error',
